@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv='Content-type' content='text/html; charset=utf-8'>
+    <title>Basic Example with JSX and ES6 features</title>
+    <link rel="stylesheet" href="blobber.css" />
+  </head>
+  <body>
+    <h1>Blobber</h1>
+    <div id="container">
+      <p>
+        To install React, follow the instructions on
+        <a href="https://github.com/facebook/react/">GitHub</a>.
+      </p>
+      <p>
+        If you can see this, React is not working right.
+        If you checked out the source from GitHub make sure to run <code>grunt</code>.
+      </p>
+    </div>
+    <h4>Example Details</h4>
+    <p>This is written with JSX with Harmony (ES6) syntax and transformed in the browser.<p>
+    <p>
+      Learn more about React at
+      <a href="https://facebook.github.io/react" target="_blank">facebook.github.io/react</a>.
+    </p>
+    <script src="react.js"></script>
+    <script src="JSXTransformer.js"></script>
+    <script type="text/jsx;harmony=true">
+
+
+      class ExampleApplication extends React.Component {
+
+        orthoConvexHull(rects, offset){
+
+        //Orthogonal/X-Y Convex Hull
+
+
+        // roughly based on python code found at: http://stackoverflow.com/questions/14409743/dynamic-and-or-static-rectilinear-orthogonal-x-y-convex-hull
+
+          var points = [];
+
+          // get all the points in the rect Array
+          for(var i = 0; i < rects.length; i++){
+            // points.push({x: rects[i].x1 - offset, y: rects[i].y1 - offset});
+            // points.push({x: rects[i].x1 - offset, y: rects[i].y2 + offset});
+            // points.push({x: rects[i].x2 + offset, y: rects[i].y2 + offset});
+            // points.push({x: rects[i].x2 + offset, y: rects[i].y1 - offset});
+            points.push({x: rects[i].x1, y: rects[i].y1});
+            points.push({x: rects[i].x1, y: rects[i].y2});
+            points.push({x: rects[i].x2, y: rects[i].y2});
+            points.push({x: rects[i].x2, y: rects[i].y1});
+          }
+
+          // sort points by x coordinate
+          points.sort(function(a,b){
+              if(a.x === b.x) return a.y-b.y;
+              return a.x-b.x;
+          });
+
+          console.log('sorted points: ', points);
+
+          // find min and max values of y
+          var min_y = Number.POSITIVE_INFINITY;
+          var min_yPoint;
+          var max_y = Number.NEGATIVE_INFINITY;
+          var max_yPoint;
+
+          var tmp;
+          for(i = points.length-1; i>=0; i--){
+            tmp = points[i].y;
+            if(tmp < min_y){
+              min_yPoint = points[i];
+              min_y = points[i].y;
+            }
+            if(tmp > max_y) {
+              max_yPoint = points[i];
+              max_y = points[i].y;
+            }
+          }
+
+          console.log('minYPoint: ', min_yPoint);
+          console.log('maxYPoint: ', max_yPoint);
+
+          // duplicate array
+          var reversedPoints = points.slice(0);
+          // and reverse
+          reversedPoints.reverse();
+
+          // construct upper paths
+          var upperLeft = this.orthoBuildUpper(reversedPoints, min_yPoint);
+          console.log('upperLeft: ', upperLeft );
+          var upperRight = this.orthoBuildUpper(points, min_yPoint);
+          console.log('upperRight: ', upperRight );
+          // construct lower paths
+          var lowerLeft = this.orthoBuildLower(reversedPoints, max_yPoint);
+          console.log('lowerLeft: ', lowerLeft);
+          var lowerRight = this.orthoBuildLower(points, max_yPoint);
+          console.log('lowerRight: ', lowerRight);
+
+          lowerLeft.reverse();
+          upperRight.reverse();
+
+          var hull = upperLeft.concat(upperRight, lowerRight, lowerLeft);
+          //var hull = lowerLeft.concat(lowerRight, upperLeft, upperRight);
+          console.log('hull', hull);
+
+          hull = hull.reduce((prev, curr) => {
+             if (!prev.some(point => point.x === curr.x && point.y === curr.y)) {
+               prev.push(curr);
+             }
+              return prev;
+           }, []);
+
+           console.log('cleaned hull', hull);
+
+          //  hull = upperLeft;
+          // hull = upperRight;
+          //
+          // hull = lowerRight;
+
+          // hull = lowerLeft;
+
+
+          return(hull);
+        }
+
+      orthoBuildLower(points, max_yPoint){
+        var section = [points[0]];
+        var x = 0;
+        var y = 0;
+        if( max_yPoint.x != points[0].x && max_yPoint.y != points[0].y){
+          for(var i=0; i < points.length; i++){
+            if(points[i].y >= section[section.length-1].y){
+
+              if(points[i].x > section[section.length-1].x){
+
+                section[section.length-1].y = points[i].y;
+
+              }
+              section.push(points[i]);
+            }
+            if(max_yPoint.x == points[i].x && max_yPoint.y == points[i].y) break;
+          }
+
+        }
+        // console.log('upper section: ', section);
+        return section;
+
+      }
+      orthoBuildUpper(points, min_yPoint){
+        var section = [points[0]];
+
+        for(var i=0; i < points.length; i++){
+          if(points[i].y <= section[section.length-1].y){
+            if(points[i].x < section[section.length-1].x){
+              section[section.length-1].y = points[i].y;
+            }
+            section.push(points[i]);
+          }
+          //if(min_yPoint.x == points[i].x && min_yPoint.y == points[i].y) break;
+        }
+
+        if( min_yPoint.x !== points[0].x && min_yPoint.y !== points[0].y){
+
+
+        }
+        // console.log('lower section: ', section);
+        return section;
+      }
+
+
+
+     roundedSVGPath( points, radius ){
+        //context.beginPath();
+        var negRadius = radius * -1;
+        var svgPath;
+
+        if (!points.length) return;
+
+        //compute the middle of the first line as start-stop-point:
+       var deltaX, deltaY, xPerY, startX, startY;
+
+        svgPath = 'M';
+
+        for (var i = 1; i <= points.length; i++){
+
+          var deltaX2, deltaY2;
+
+          // some logic to deel with closing the loop
+          if(i < points.length-1){
+            deltaX = points[i].x - points[i-1].x;
+            deltaY = points[i].y - points[i-1].y;
+            deltaX2 = points[i+1].x - points[i].x;
+            deltaY2 = points[i+1].y - points[i].y;
+          } else if (i == points.length-1){
+            deltaX = points[i].x - points[i-1].x;
+            deltaY = points[i].y - points[i-1].y;
+            deltaX2 = points[0].x - points[i].x;
+            deltaY2 = points[0].y - points[i].y
+          } else if (i == points.length){
+            deltaX = points[0].x - points[i-1].x;
+            deltaY = points[0].y - points[i-1].y;
+            deltaX2 = points[1].x - points[0].x;
+            deltaY2 = points[1].y - points[0].y
+          }
+
+          // var angle1 = Math.atan2(deltaY, deltaX ) * (180/Math.PI);
+          // var angle2 = Math.atan2(radius, 0 ) * (180/Math.PI);
+          // var angle = (angle1 - angle2)
+          // console.log('angles ', i, angle1, angle2 );
+          // console.log('angle dif ', angle);
+
+          console.log('delta x y: ', deltaX, deltaY)
+          // var rX = radius > Math.abs(deltaX) ? Math.abs(deltaX) : radius;
+          // var rY = radius > Math.abs(deltaY) ? Math.abs(deltaY) : radius;
+          // var r = rX >= rY ? rX : rY;
+
+          // console.log('r: ', r);
+          //svgPath += ' L ' + (points[i].x ) + ' ' + (points[i].y );
+
+          if(deltaY < 0){
+
+            if (svgPath == 'M') svgPath += ' ' + points[0].x + ' ' + (points[0].y - radius);
+            // up
+            svgPath += ' l ' + (deltaX) + ' ' + (deltaY + radius * 2);
+
+            if(deltaX2 < 0){
+              // up then left
+              svgPath += ' s 0 ' + negRadius + ' ' + negRadius + ' ' + negRadius;
+            } else if (deltaX2 > 0){
+              // up then right
+              svgPath += ' s 0 ' + negRadius + ' ' + radius + ' ' + negRadius;
+            }
+          } else if(deltaY > 0){
+            //down
+            if (svgPath == 'M') svgPath += ' ' + points[0].x + ' ' + (points[0].y + radius);
+
+            svgPath += ' l ' + (deltaX) + ' ' + (deltaY - radius * 2);
+            if(deltaX2 < 0){
+              // down then left
+              svgPath += ' s 0 ' + negRadius + ' ' + negRadius + ' ' + radius;
+            } else if (deltaX2 > 0){
+              // down then right
+              svgPath += ' s 0 ' + ' ' + radius + ' ' + radius + ' ' + radius;
+            }
+          } else if (deltaX < 0){
+            // left
+            if (svgPath == 'M') svgPath += ' ' + (points[0].x - radius) + ' ' + (points[0].y);
+            svgPath += ' l ' + (deltaX + (radius*2)) + ' ' + (deltaY);
+
+            if(deltaY2 < 0){
+              // left, then up
+              svgPath += ' s ' + negRadius + ' 0 ' + negRadius + ' ' + negRadius;
+            }
+            if(deltaY2 > 0){
+              // left, then down
+              svgPath += ' s ' + negRadius + ' 0 ' + negRadius + ' '+  radius;
+            }
+          } else if (deltaX > 0){
+              // right
+              if (svgPath == 'M') svgPath += ' ' + (points[0].x + radius) + ' ' + (points[0].y);
+              if (svgPath == 'M') svgPath += ' ' + points[0].x + ' ' + (points[0].y - radius);
+              svgPath += ' l ' + (deltaX + (radius*-2)) + ' ' + (deltaY);
+              if(deltaY2 > 0){
+                // right, then down
+                svgPath += ' s ' + radius + ' 0 ' + radius + ' ' + radius;
+              }
+              if(deltaY2 < 0){
+                // right, then up
+                svgPath += ' s ' + ' ' + radius + ' 0 ' + radius + ' ' + negRadius;
+              }
+          }
+
+        }
+
+        // close the shape
+
+
+        return svgPath
+    }
+
+
+        render() {
+
+          var rects = [{x1:10, y1:10, x2:110, y2:120},{x1:50, y1:121, x2:175, y2:170}/*, {x1:105, y1:15, x2:175, y2:50}*/];
+          var hull = this.orthoConvexHull(rects, 0);
+          //hull.reverse();
+          var roundedHullStr = this.roundedSVGPath(hull, 16);
+          console.log('hull', hull);
+
+          var svgPointsStr = '';
+          for(var i=0; i<hull.length; i++){
+            console.log('point: ', hull[i].x);
+
+            svgPointsStr = svgPointsStr + hull[i].x + ',' + hull[i].y + ' ';
+          }
+
+          var svgRects = rects.map(function(rect, id){
+            return(
+                <rect fill="grey" x={rect.x1} y={rect.y1} width={rect.x2-rect.x1} height={rect.y2-rect.y1} key={'svgrect_' + id}/>
+            )
+
+          });
+
+            return(
+              <div className='container'>
+                <svg width='200' height='200'>
+                  {svgRects}
+                  <polyline fill="none" stroke="red" points={svgPointsStr}/>
+                  <path fill="green" opacity=".5" stroke="green" d={roundedHullStr}/>
+                </svg>
+              </div>
+            );
+          // var elapsed = Math.round(this.props.elapsed  / radius0);
+          // var seconds = elapsed / radius + (elapsed % radius ? '' : '.0' );
+          // var message =
+          //   `React has been successfully running for ${seconds} seconds.`;
+          //
+          // return <p>{message}</p>;
+        }
+      }
+
+      React.render(
+          <ExampleApplication elapsed={new Date().getTime() - start} />,
+          document.getElementById('container')
+      );
+
+      var start = new Date().getTime();
+      // setInterval(() => {
+      //   React.render(
+      //     <ExampleApplication elapsed={new Date().getTime() - start} />,
+      //     document.getElementById('container')
+      //   );
+      // }, 50);
+    </script>
+  </body>
+</html>
