@@ -25,6 +25,7 @@
     </p>
     <script src="react.js"></script>
     <script src="JSXTransformer.js"></script>
+    <script src="convex_hull.js"></script>
     <script type="text/jsx;harmony=true">
 
 
@@ -35,48 +36,64 @@
         //Orthogonal/X-Y Convex Hull
 
 
-        // roughly based on python code found at: http://stackoverflow.com/questions/14409743/dynamic-and-or-static-rectilinear-orthogonal-x-y-convex-hull
+        // roughly based on python code found at:
+        // http://stackoverflow.com/questions/14409743/dynamic-and-or-static-rectilinear-orthogonal-x-y-convex-hull
 
           var points = [];
 
           // get all the points in the rect Array
           for(var i = 0; i < rects.length; i++){
-            // points.push({x: rects[i].x1 - offset, y: rects[i].y1 - offset});
-            // points.push({x: rects[i].x1 - offset, y: rects[i].y2 + offset});
-            // points.push({x: rects[i].x2 + offset, y: rects[i].y2 + offset});
-            // points.push({x: rects[i].x2 + offset, y: rects[i].y1 - offset});
-            points.push({x: rects[i].x1, y: rects[i].y1});
-            points.push({x: rects[i].x1, y: rects[i].y2});
-            points.push({x: rects[i].x2, y: rects[i].y2});
-            points.push({x: rects[i].x2, y: rects[i].y1});
+            points.push({x: rects[i].x1 - offset, y: rects[i].y1 - offset});
+            points.push({x: rects[i].x1 - offset, y: rects[i].y2 + offset});
+            points.push({x: rects[i].x2 + offset, y: rects[i].y2 + offset});
+            points.push({x: rects[i].x2 + offset, y: rects[i].y1 - offset});
+            // points.push({x: rects[i].x1, y: rects[i].y1});
+            // points.push({x: rects[i].x1, y: rects[i].y2});
+            // points.push({x: rects[i].x2, y: rects[i].y2});
+            // points.push({x: rects[i].x2, y: rects[i].y1});
           }
 
-          // sort points by x coordinate
-          points.sort(function(a,b){
-              if(a.x === b.x) return a.y-b.y;
-              return a.x-b.x;
-          });
-
-          console.log('sorted points: ', points);
+          console.log('points: ', JSON.stringify(points));
 
           // find min and max values of y
           var min_y = Number.POSITIVE_INFINITY;
           var min_yPoint;
           var max_y = Number.NEGATIVE_INFINITY;
           var max_yPoint;
-
+          var min_x = Number.POSITIVE_INFINITY;
+          var min_xPoint;
+          var max_x = Number.NEGATIVE_INFINITY;
+          var max_xPoint;
           var tmp;
           for(i = points.length-1; i>=0; i--){
             tmp = points[i].y;
             if(tmp < min_y){
               min_yPoint = points[i];
               min_y = points[i].y;
-            }
-            if(tmp > max_y) {
+            } else if(tmp > max_y) {
               max_yPoint = points[i];
               max_y = points[i].y;
             }
+            tmp = points[i].x;
+            if(tmp < min_x){
+              min_xPoint = points[i];
+              min_x = points[i].x;
+            } else if(tmp > max_x) {
+              max_xPoint = points[i];
+              max_x = points[i].x;
+            }
           }
+          //debugger;
+          // sort points by x coordinate, then by y
+          points.sort(function(a,b){
+              // if(a.y == b.y) return a.x-b.x;
+              // return a.y-b.y;
+              if(a.x == b.x) return a.y-b.y;
+              return a.x-b.x;
+
+          });
+
+          console.log('sorted points: ', JSON.stringify(points));
 
           console.log('minYPoint: ', min_yPoint);
           console.log('maxYPoint: ', max_yPoint);
@@ -87,31 +104,66 @@
           reversedPoints.reverse();
 
           // construct upper paths
-          var upperLeft = this.orthoBuildUpper(reversedPoints, min_yPoint);
+          var upperLeft = this.orthoBuildUpperLeft(points, min_yPoint);
           console.log('upperLeft: ', upperLeft );
-          var upperRight = this.orthoBuildUpper(points, min_yPoint);
+          var upperRight = this.orthoBuildUpperRight(reversedPoints, max_xPoint);
           console.log('upperRight: ', upperRight );
+
           // construct lower paths
-          var lowerLeft = this.orthoBuildLower(reversedPoints, max_yPoint);
+          var lowerLeft = this.orthoBuildLowerLeft(points, max_yPoint);
           console.log('lowerLeft: ', lowerLeft);
-          var lowerRight = this.orthoBuildLower(points, max_yPoint);
+          var lowerRight = this.orthoBuildLowerRight(reversedPoints, max_yPoint);
           console.log('lowerRight: ', lowerRight);
 
-          lowerLeft.reverse();
           upperRight.reverse();
+          lowerRight.reverse();
+          lowerLeft.reverse();
+
 
           var hull = upperLeft.concat(upperRight, lowerRight, lowerLeft);
+          //var hull = lowerRight;
           //var hull = lowerLeft.concat(lowerRight, upperLeft, upperRight);
-          console.log('hull', hull);
+          console.log('hull', JSON.stringify(hull));
 
-          hull = hull.reduce((prev, curr) => {
-             if (!prev.some(point => point.x === curr.x && point.y === curr.y)) {
-               prev.push(curr);
-             }
-              return prev;
-           }, []);
+          // remove repeats
+          // for(i = 1; i < hull.length; i++){
+          //   if(hull[i].x == hull[i-1].x && hull[i].y == hull[i-1].y){
+          //     // remove duplicate
+          //     hull.splice(i, 1);
+          //     i--;
+          //   }
+          // }
+          //      console.log('cleaned hull', JSON.stringify(hull));
 
-           console.log('cleaned hull', hull);
+        //  remove all duplicate points
+        hull = hull.reduce((prev, curr) => {
+           if (!prev.some(point => point.x === curr.x && point.y === curr.y)) {
+             prev.push(curr);
+           }
+            return prev;
+         }, []);
+
+        // remove redundant points on lines
+        for(i=2; i<hull.length; i++){
+          if(hull[i-2].x == hull[i-1].x && hull[i-1].x == hull[i].x){
+            console.log('remove: ', hull[i-2].x, hull[i-1].x, hull[i].x );
+            hull.splice(i-1, 1);
+          }
+        }
+        for(i=2; i<hull.length; i++){
+          if(hull[i-2].y == hull[i-1].y && hull[i-1].y == hull[i].y){
+            console.log('remove: ', hull[i-2].y, hull[i-1].y, hull[i].y );
+            hull.splice(i-1, 1);
+
+          }
+        }
+        // var closeLine = [{x: hull[hull.length-1].x, y: hull[hull.length-1].y},
+        //                  {x: hull[0].x, y: hull[0].y}];
+
+           hull = hull.concat([{x: hull[0].x, y: hull[0].y}]);
+           //console.log('closeLine: ', JSON.stringify(closeLine));
+
+           console.log('cleaned hull', JSON.stringify(hull));
 
           //  hull = upperLeft;
           // hull = upperRight;
@@ -124,51 +176,154 @@
           return(hull);
         }
 
-      orthoBuildLower(points, max_yPoint){
-        var section = [points[0]];
-        var x = 0;
-        var y = 0;
-        if( max_yPoint.x != points[0].x && max_yPoint.y != points[0].y){
-          for(var i=0; i < points.length; i++){
-            if(points[i].y >= section[section.length-1].y){
 
-              if(points[i].x > section[section.length-1].x){
-
-                section[section.length-1].y = points[i].y;
-
-              }
-              section.push(points[i]);
-            }
-            if(max_yPoint.x == points[i].x && max_yPoint.y == points[i].y) break;
-          }
-
-        }
-        // console.log('upper section: ', section);
-        return section;
-
-      }
-      orthoBuildUpper(points, min_yPoint){
+      orthoBuildLowerLeft(points){
         var section = [points[0]];
 
         for(var i=0; i < points.length; i++){
-          if(points[i].y <= section[section.length-1].y){
-            if(points[i].x < section[section.length-1].x){
-              section[section.length-1].y = points[i].y;
+          console.log('x,y: ', points[i].x, points[i].y);
+          if(section.length > 1){
+            if(points[i].y == section[section.length-1].y){
+              // horizontal line
+              if(points[i].x >section[section.length-1].x){
+                //right
+                section.push(points[i]);
+              }
             }
+            if(points[i].x == section[section.length-1].x){
+              // vertical line
+              if(points[i].y > section[section.length-1].y){
+                section.push(points[i]);
+              }
+            }
+            if(points[i].y > section[section.length-1].y){
+              if(points[i].x > section[section.length-1].x){
+                // down right
+                //section[section.length-1].y = points[i].y
+                var y = section[section.length-1].y;
+                var x = points[i].x
+                section.push({x: x, y: y});
+                section.push(points[i]);
+              }
+            }
+          } else {
+            // first point
             section.push(points[i]);
           }
-          //if(min_yPoint.x == points[i].x && min_yPoint.y == points[i].y) break;
         }
+        return section;
+      }
+      orthoBuildLowerRight(points, max_yPoint){
+        var section = [max_yPoint];
 
-        if( min_yPoint.x !== points[0].x && min_yPoint.y !== points[0].y){
-
-
+        for(var i=0; i < points.length; i++){
+          console.log('lr x,y: ', points[i].x, points[i].y);
+          if(section.length >= 1){
+            if(points[i].y == section[section.length-1].y){
+              // horizontal line
+              if(points[i].x > section[section.length-1].x){
+                //right
+                section.push(points[i]);
+              }
+            }
+            if(points[i].x == section[section.length-1].x){
+              // vertical line
+              if(points[i].y < section[section.length-1].y){
+                section.push(points[i]);
+              }
+            }
+            if(points[i].y < section[section.length-1].y){
+              if(points[i].x > section[section.length-1].x){
+                // up right
+                //section[section.length-1].x = points[i].x
+                var x = section[section.length-1].x;
+                var y = points[i].y
+                section.push({x: x, y: y});
+                section.push(points[i]);
+              }
+            }
+          } else {
+            // first point
+            // if(points[i].y == max_yPoint){
+            //   section.push(points[i]);
+            // }
+          }
         }
-        // console.log('lower section: ', section);
+        return section;
+      }
+      orthoBuildUpperLeft(points, min_yPoint){
+        var section = [points[0]];
+
+        for(var i=0; i < points.length; i++){
+          console.log('x,y: ', points[i].x, points[i].y);
+          if(section.length > 1){
+            if(points[i].y == section[section.length-1].y){
+              // horizontal line
+              if(points[i].x > section[section.length-1].x){
+                //right
+                section.push(points[i]);
+              }
+            }
+            if(points[i].x == section[section.length-1].x){
+              // vertical line
+              if(points[i].y < section[section.length-1].y){
+                section.push(points[i]);
+              }
+            }
+            if(points[i].y < section[section.length-1].y){
+              if(points[i].x > section[section.length-1].x){
+                // up right
+                //section[section.length-1].x = points[i].x
+                var y = section[section.length-1].y;
+                var x = points[i].x
+                section.push({x: x, y: y});
+                section.push(points[i]);
+              }
+            }
+          } else {
+            // first point
+            section.push(points[i]);
+          }
+        }
         return section;
       }
 
-
+      orthoBuildUpperRight(points, max_xPoint){
+        var section = [];
+        console.log('buildUpperRight');
+        for(var i=0; i < points.length; i++){
+          if(section.length > 1){
+            if(points[i].y == section[section.length-1].y){
+              // horizontal line
+              if(points[i].x < section[section.length-1].x){
+                section.push(points[i]);
+              }
+            }
+            if(points[i].x == section[section.length-1].x){
+              // vertical line
+              if(points[i].y < section[section.length-1].y){
+                section.push(points[i]);
+              }
+            }
+            if(points[i].y < section[section.length-1].y){
+              if(points[i].x < section[section.length-1].x){
+                // up left
+                //section[section.length-1].x = points[i].x
+                var y = section[section.length-1].y;
+                var x = points[i].x
+                section.push({x: x, y: y});
+                section.push(points[i]);
+              }
+            }
+          } else {
+            // first point
+            if(points[i].x == max_xPoint.x){
+              section.push(points[i]);
+            }
+          }
+        }
+        return section;
+      }
 
      roundedSVGPath( points, radius ){
         //context.beginPath();
@@ -182,7 +337,7 @@
 
         svgPath = 'M';
 
-        for (var i = 1; i <= points.length; i++){
+        for (var i = 1; i < points.length; i++){
 
           var deltaX2, deltaY2;
 
@@ -192,25 +347,16 @@
             deltaY = points[i].y - points[i-1].y;
             deltaX2 = points[i+1].x - points[i].x;
             deltaY2 = points[i+1].y - points[i].y;
+
           } else if (i == points.length-1){
             deltaX = points[i].x - points[i-1].x;
             deltaY = points[i].y - points[i-1].y;
-            deltaX2 = points[0].x - points[i].x;
-            deltaY2 = points[0].y - points[i].y
-          } else if (i == points.length){
-            deltaX = points[0].x - points[i-1].x;
-            deltaY = points[0].y - points[i-1].y;
-            deltaX2 = points[1].x - points[0].x;
-            deltaY2 = points[1].y - points[0].y
+            deltaX2 = points[1].x - points[i].x;
+            deltaY2 = points[1].y - points[i].y
           }
 
-          // var angle1 = Math.atan2(deltaY, deltaX ) * (180/Math.PI);
-          // var angle2 = Math.atan2(radius, 0 ) * (180/Math.PI);
-          // var angle = (angle1 - angle2)
-          // console.log('angles ', i, angle1, angle2 );
-          // console.log('angle dif ', angle);
-
-          console.log('delta x y: ', deltaX, deltaY)
+          console.log('delta x y: ', i,  deltaX, deltaY);
+          console.log('delta2 x y: ', i,  deltaX2, deltaY2);
           // var rX = radius > Math.abs(deltaX) ? Math.abs(deltaX) : radius;
           // var rY = radius > Math.abs(deltaY) ? Math.abs(deltaY) : radius;
           // var r = rX >= rY ? rX : rY;
@@ -219,13 +365,13 @@
           //svgPath += ' L ' + (points[i].x ) + ' ' + (points[i].y );
 
           if(deltaY < 0){
-
-            if (svgPath == 'M') svgPath += ' ' + points[0].x + ' ' + (points[0].y - radius);
             // up
-            svgPath += ' l ' + (deltaX) + ' ' + (deltaY + radius * 2);
+            if (svgPath == 'M') svgPath += ' ' + points[0].x + ' ' + (points[0].y - radius);
+            svgPath += ' l ' + (deltaX) + ' ' + (deltaY + (radius * 2));
 
             if(deltaX2 < 0){
               // up then left
+
               svgPath += ' s 0 ' + negRadius + ' ' + negRadius + ' ' + negRadius;
             } else if (deltaX2 > 0){
               // up then right
@@ -235,10 +381,10 @@
             //down
             if (svgPath == 'M') svgPath += ' ' + points[0].x + ' ' + (points[0].y + radius);
 
-            svgPath += ' l ' + (deltaX) + ' ' + (deltaY - radius * 2);
+            svgPath += ' l ' + (deltaX) + ' ' + (deltaY - (radius*2) );
             if(deltaX2 < 0){
               // down then left
-              svgPath += ' s 0 ' + negRadius + ' ' + negRadius + ' ' + radius;
+              svgPath += ' s 0 ' + radius + ' ' + negRadius + ' ' + radius;
             } else if (deltaX2 > 0){
               // down then right
               svgPath += ' s 0 ' + ' ' + radius + ' ' + radius + ' ' + radius;
@@ -259,7 +405,7 @@
           } else if (deltaX > 0){
               // right
               if (svgPath == 'M') svgPath += ' ' + (points[0].x + radius) + ' ' + (points[0].y);
-              if (svgPath == 'M') svgPath += ' ' + points[0].x + ' ' + (points[0].y - radius);
+
               svgPath += ' l ' + (deltaX + (radius*-2)) + ' ' + (deltaY);
               if(deltaY2 > 0){
                 // right, then down
@@ -275,23 +421,23 @@
 
         // close the shape
 
-
-        return svgPath
+        console.log('svgPath: ', svgPath);
+        return svgPath;
     }
 
 
         render() {
 
-          var rects = [{x1:10, y1:10, x2:110, y2:120},{x1:50, y1:121, x2:175, y2:170}/*, {x1:105, y1:15, x2:175, y2:50}*/];
-          var hull = this.orthoConvexHull(rects, 0);
+          console.log('rects1');
+          var rects = [{x1:30, y1:60, x2:180, y2:120},{x1:50, y1:30, x2:155, y2:100}, {x1:115, y1:15, x2:275, y2:50}];
+          var hull = this.orthoConvexHull(rects, 10);
           //hull.reverse();
-          var roundedHullStr = this.roundedSVGPath(hull, 16);
+          var roundedHullStr = this.roundedSVGPath(hull, 15);
           console.log('hull', hull);
 
           var svgPointsStr = '';
           for(var i=0; i<hull.length; i++){
             console.log('point: ', hull[i].x);
-
             svgPointsStr = svgPointsStr + hull[i].x + ',' + hull[i].y + ' ';
           }
 
@@ -302,13 +448,43 @@
 
           });
 
+          console.log('rects2');
+          var rects2 = [{x1:30, y1:60, x2:60, y2:120}, {x1:105, y1:20, x2:175, y2:150}];
+          var hull2 = this.orthoConvexHull(rects2, 16);
+          //hull.reverse();
+          var roundedHullStr2 = this.roundedSVGPath(hull2, 16);
+          console.log('hull2', hull2);
+
+          var svgPointsStr2 = '';
+          for(var i=0; i<hull2.length; i++){
+            console.log('point: ', hull2[i].x);
+            svgPointsStr2 = svgPointsStr2 + hull2[i].x + ',' + hull2[i].y + ' ';
+          }
+
+          var svgRects2 = rects2.map(function(rect, id){
             return(
-              <div className='container'>
-                <svg width='200' height='200'>
-                  {svgRects}
-                  <polyline fill="none" stroke="red" points={svgPointsStr}/>
-                  <path fill="green" opacity=".5" stroke="green" d={roundedHullStr}/>
-                </svg>
+                <rect fill="grey" x={rect.x1} y={rect.y1} width={rect.x2-rect.x1} height={rect.y2-rect.y1} key={'svgrect_' + id}/>
+            )
+
+          });
+          // <path fill="green" opacity=".125" stroke="green" d={roundedHullStr}/>
+          // <path fill="orange" opacity=".125" stroke="green" d={roundedHullStr2}/>
+            return(
+              <div className='svgContainer'>
+                <div className='container'>
+                  <svg width='400' height='400'>
+                    {svgRects}
+                    <polyline fill="none" opacity=".25" stroke="blue" points={svgPointsStr}/>
+                    <path fill="purple" opacity=".5" stroke="black" d={roundedHullStr}/>
+                  </svg>
+                </div>
+                <div className='container'>
+                  <svg width='400' height='400'>
+                    {svgRects2}
+                    <polyline fill="none" stroke="red" points={svgPointsStr2}/>
+                    <path fill="orange" opacity=".25" stroke="green" d={roundedHullStr2}/>
+                  </svg>
+                </div>
               </div>
             );
           // var elapsed = Math.round(this.props.elapsed  / radius0);
