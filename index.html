@@ -325,9 +325,8 @@
         return section;
       }
 
-     roundedSVGPath( points, radius ){
-        //context.beginPath();
-        var negRadius = radius * -1;
+     roundedSVGPath( points, r ){
+
         var svgPath;
 
         if (!points.length) return;
@@ -357,11 +356,27 @@
 
           console.log('delta x y: ', i,  deltaX, deltaY);
           console.log('delta2 x y: ', i,  deltaX2, deltaY2);
-          // var rX = radius > Math.abs(deltaX) ? Math.abs(deltaX) : radius;
-          // var rY = radius > Math.abs(deltaY) ? Math.abs(deltaY) : radius;
-          // var r = rX >= rY ? rX : rY;
+          var rX = 100;
+          var rY = 100;
+          console.log('r:', r);
+          if(r < Math.ceil(Math.abs(deltaX)/2)){
+            console.log('rd:', deltaX);
+             rX = r;
+          } else if (deltaX != 0) {
+            rX = Math.ceil(Math.abs(deltaX)-1/2);
+          }
+          if(r < Math.ceil(Math.abs(deltaY)-1/2)){
+            rY = r;
+          } else if (deltaY != 0) {
+            rY = Math.ceil(Math.abs(deltaY)/2);
+          }
+          // var rX = r > Math.abs(deltaX) ? Math.abs(deltaX) : r;
+          // var rY = r > Math.abs(deltaY) ? Math.abs(deltaY) : r;
+          console.log('r', r, rX, rY);
+          var radius = rX < rY ? rX : rY;
+          var negRadius = -1 * radius;
 
-          // console.log('r: ', r);
+          console.log('radius: ', radius);
           //svgPath += ' L ' + (points[i].x ) + ' ' + (points[i].y );
 
           if(deltaY < 0){
@@ -429,10 +444,10 @@
         render() {
 
           console.log('rects1');
-          var rects = [{x1:30, y1:60, x2:180, y2:120},{x1:50, y1:30, x2:155, y2:100}, {x1:115, y1:15, x2:275, y2:50}];
+          var rects = [{x1:30, y1:60, x2:180, y2:120},{x1:60, y1:30, x2:155, y2:100}, {x1:115, y1:15, x2:275, y2:50}];
           var hull = this.orthoConvexHull(rects, 10);
           //hull.reverse();
-          var roundedHullStr = this.roundedSVGPath(hull, 15);
+          var roundedHullStr = this.roundedSVGPath(hull, 12);
           console.log('hull', hull);
 
           var svgPointsStr = '';
