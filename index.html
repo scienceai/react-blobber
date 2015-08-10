@@ -339,7 +339,9 @@
         for (var i = 1; i < points.length; i++){
 
           var deltaX2, deltaY2;
-
+          // TODO - need to look 3 segments ahead to calc correct line distance
+          // with radi
+          
           // some logic to deel with closing the loop
           if(i < points.length-1){
             deltaX = points[i].x - points[i-1].x;
@@ -358,23 +360,29 @@
           console.log('delta2 x y: ', i,  deltaX2, deltaY2);
           var rX = 100;
           var rY = 100;
-          console.log('r:', r);
-          if(r < Math.ceil(Math.abs(deltaX)/2)){
-            console.log('rd:', deltaX);
-             rX = r;
-          } else if (deltaX != 0) {
-            rX = Math.ceil(Math.abs(deltaX)-1/2);
+
+          var radius1 = r;
+          var radius2 = r;
+
+
+          if (deltaX != 0 && Math.abs(deltaX)/2 < radius1){
+            radius1 = radius2 = Math.abs(deltaX)/2;
           }
-          if(r < Math.ceil(Math.abs(deltaY)-1/2)){
-            rY = r;
-          } else if (deltaY != 0) {
-            rY = Math.ceil(Math.abs(deltaY)/2);
+          if (deltaY != 0 && Math.abs(deltaY)/2 < radius1){
+            radius1 = radius2 = Math.abs(deltaY)/2;
           }
-          // var rX = r > Math.abs(deltaX) ? Math.abs(deltaX) : r;
-          // var rY = r > Math.abs(deltaY) ? Math.abs(deltaY) : r;
-          console.log('r', r, rX, rY);
-          var radius = rX < rY ? rX : rY;
+          if (deltaX2 != 0 && Math.abs(deltaX2)/2 < radius2){
+            radius1 = radius2 =  Math.abs(deltaX2)/2;
+          }
+          if (deltaY2 != 0 && Math.abs(deltaY2)/2 < radius2){
+            radius1 = radius2 =  Math.abs(deltaY2)/2;
+          }
+          //var radius2 = radius2 < radius1 ? radius2 : radius1;
+          var radius = Math.min(radius1, radius2);
+
+          console.log('min radius ', radius);
           var negRadius = -1 * radius;
+
 
           console.log('radius: ', radius);
           //svgPath += ' L ' + (points[i].x ) + ' ' + (points[i].y );
@@ -382,7 +390,10 @@
           if(deltaY < 0){
             // up
             if (svgPath == 'M') svgPath += ' ' + points[0].x + ' ' + (points[0].y - radius);
-            svgPath += ' l ' + (deltaX) + ' ' + (deltaY + (radius * 2));
+            console.log('radius1,2 ', radius1, radius2);
+            var ydist =  (deltaY + (radius1 + radius2));
+            console.log('ydist :', ydist);
+            svgPath += ' l ' + (deltaX) + ' ' + (ydist);
 
             if(deltaX2 < 0){
               // up then left
@@ -396,7 +407,7 @@
             //down
             if (svgPath == 'M') svgPath += ' ' + points[0].x + ' ' + (points[0].y + radius);
 
-            svgPath += ' l ' + (deltaX) + ' ' + (deltaY - (radius*2) );
+            svgPath += ' l ' + (deltaX) + ' ' + (deltaY - (radius1 + radius2) );
             if(deltaX2 < 0){
               // down then left
               svgPath += ' s 0 ' + radius + ' ' + negRadius + ' ' + radius;
@@ -407,7 +418,7 @@
           } else if (deltaX < 0){
             // left
             if (svgPath == 'M') svgPath += ' ' + (points[0].x - radius) + ' ' + (points[0].y);
-            svgPath += ' l ' + (deltaX + (radius*2)) + ' ' + (deltaY);
+            svgPath += ' l ' + (deltaX + (radius1 + radius2)) + ' ' + (deltaY);
 
             if(deltaY2 < 0){
               // left, then up
@@ -421,7 +432,7 @@
               // right
               if (svgPath == 'M') svgPath += ' ' + (points[0].x + radius) + ' ' + (points[0].y);
 
-              svgPath += ' l ' + (deltaX + (radius*-2)) + ' ' + (deltaY);
+              svgPath += ' l ' + (deltaX - (radius1 + radius2)) + ' ' + (deltaY);
               if(deltaY2 > 0){
                 // right, then down
                 svgPath += ' s ' + radius + ' 0 ' + radius + ' ' + radius;
@@ -445,9 +456,9 @@
 
           console.log('rects1');
           var rects = [{x1:30, y1:60, x2:180, y2:120},{x1:60, y1:30, x2:155, y2:100}, {x1:115, y1:15, x2:275, y2:50}];
-          var hull = this.orthoConvexHull(rects, 10);
+          var hull = this.orthoConvexHull(rects, 15);
           //hull.reverse();
-          var roundedHullStr = this.roundedSVGPath(hull, 12);
+          var roundedHullStr = this.roundedSVGPath(hull, 10);
           console.log('hull', hull);
 
           var svgPointsStr = '';
@@ -465,9 +476,9 @@
 
           console.log('rects2');
           var rects2 = [{x1:30, y1:60, x2:60, y2:120}, {x1:105, y1:20, x2:175, y2:150}];
-          var hull2 = this.orthoConvexHull(rects2, 16);
+          var hull2 = this.orthoConvexHull(rects2, 25);
           //hull.reverse();
-          var roundedHullStr2 = this.roundedSVGPath(hull2, 16);
+          var roundedHullStr2 = this.roundedSVGPath(hull2, 15);
           console.log('hull2', hull2);
 
           var svgPointsStr2 = '';
