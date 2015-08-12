@@ -35,8 +35,8 @@ var App = React.createClass({
     //console.log('drag: ', this.state.dragging);
     if (this.state.dragging == -1) return
     var newRects = this.state.rects.slice();
-    newRects[this.state.dragging].x = e.pageX-10;
-    newRects[this.state.dragging].y = e.pageY-10;
+    newRects[this.state.dragging].x = e.pageX-30;
+    newRects[this.state.dragging].y = e.pageY-30;
     console.log('x ', e.pageX);
      this.setState({
        rects: newRects
@@ -60,7 +60,7 @@ var App = React.createClass({
     return(
       <div className='blobberDemo' style={{width:'500px', height:'500px', position:'relative'}}>
 
-        <Blobber rects={this.state.rects} cornerRadius={15} pathOffset={15}/>
+        <Blobber rects={this.state.rects} cornerRadius={20} pathOffset={20}/>
         {rectDivs}
       </div>
     );

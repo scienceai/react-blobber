@@ -370,12 +370,20 @@ roundedSVGPath( points, r ){
 
   svgPath = 'M';
   var prevRadius, radius;
-  prevRadius = radius = r;
+  prevRadius = r;
+  radius = r;
+  deltaX = points[1].x - points[0].x;
+  deltaY = points[1].y - points[0].y;
+  if (deltaX != 0 && Math.abs(deltaX)/2 < prevRadius){
+    prevRadius = Math.abs(deltaX)/2;
+  }
+  if (deltaY != 0 && Math.abs(deltaY)/2 < prevRadius){
+    prevRadius = Math.abs(deltaY)/2;
+  }
+  radius = prevRadius;
+  console.log('prevRadius', prevRadius);
 
-  for (var i = 0; i < points.length; i++){
-
-    // TODO - need to look 3 segments ahead to calc correct line distance
-    // with radi
+  for (var i = 1; i < points.length; i++){
 
     // some logic to deel with closing the loop
     if(i == 0){
@@ -443,9 +451,12 @@ roundedSVGPath( points, r ){
 
     if(deltaY < 0){
       // up
-      console.log('up ', deltaY);
-      if (svgPath == 'M') svgPath += ' ' + points[0].x + ' ' + (points[0].y - radius);
 
+      if (svgPath == 'M'){
+        console.log('start ', points[0].x, ',', points[0].y, ' - ', radius);
+        svgPath += ' ' + points[0].x + ' ' + (points[0].y - radius);
+      }
+      console.log('up ', deltaY);
       svgPath += ' l ' + (deltaX) + ' ' + (deltaY + prevRadius + radius);
 
       if(deltaX2 < 0){
@@ -471,8 +482,14 @@ roundedSVGPath( points, r ){
       }
     } else if (deltaX < 0){
       // left
+
+      if (svgPath == 'M'){
+        console.log('start ', points[0].x, '-',  radius, ',', points[0].y);
+        svgPath += ' ' + (points[0].x - radius) + ' ' + (points[0].y);
+      }
+
       console.log('left ', deltaX);
-      if (svgPath == 'M') svgPath += ' ' + (points[0].x - radius) + ' ' + (points[0].y);
+
       svgPath += ' l ' + (deltaX + (prevRadius + radius)) + ' ' + (deltaY);
 
       if(deltaY2 < 0){
@@ -485,8 +502,12 @@ roundedSVGPath( points, r ){
       }
     } else if (deltaX > 0){
         // right
+
+        if (svgPath == 'M'){
+            console.log('start ', points[0].x, '+',  radius, ',', points[0].y);
+           svgPath += ' ' + (points[0].x + prevRadius) + ' ' + (points[0].y);
+        }
         console.log('right ',   deltaX, ' - (',  prevRadius, ' + ' + radius, ')');
-        if (svgPath == 'M') svgPath += ' ' + (points[0].x + radius) + ' ' + (points[0].y);
 
         svgPath += ' l ' + (deltaX - (prevRadius + radius)) + ' ' + (deltaY);
         if(deltaY2 > 0){
