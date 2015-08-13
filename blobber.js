@@ -387,6 +387,7 @@ roundedSVGPath( points, r ){
 
     // some logic to deel with closing the loop
     if(i == 0){
+      console.log('i==0');
       deltaX = points[i].x - points[points.length-1].x;
       deltaY = points[i].y - points[points.length-1].y;
       deltaX2 = points[i+1].x - points[i].x;
@@ -394,6 +395,7 @@ roundedSVGPath( points, r ){
       deltaX3 = points[i+2].x - points[i+1].x;
       deltaY3 = points[i+2].y - points[i+1].y;
     } else if(i < points.length-2){
+      console.log('i<length-2', i);
       deltaX = points[i].x - points[i-1].x;
       deltaY = points[i].y - points[i-1].y;
       deltaX2 = points[i+1].x - points[i].x;
@@ -401,19 +403,21 @@ roundedSVGPath( points, r ){
       deltaX3 = points[i+2].x - points[i+1].x;
       deltaY3 = points[i+2].y - points[i+1].y;
     } else if (i == points.length-2){
+      console.log('i==length-2', points.length-2, i);
       deltaX = points[i].x - points[i-1].x;
       deltaY = points[i].y - points[i-1].y;
-      deltaX2 = points[1].x - points[i].x;
-      deltaY2 = points[1].y - points[i].y
+      deltaX2 = points[i+1].x - points[i].x;
+      deltaY2 = points[i+1].y - points[i].y
+      deltaX3 = points[1].x - points[0].x;
+      deltaY3 = points[1].y - points[0].y
+    }else if (i == points.length-1){
+      console.log('i==length-1', points.length-1, i);
+      deltaX = points[i].x - points[i-1].x;
+      deltaY = points[i].y - points[i-1].y;
+      deltaX2 = points[1].x - points[0].x;
+      deltaY2 = points[1].y - points[0].y
       deltaX3 = points[2].x - points[1].x;
       deltaY3 = points[2].y - points[1].y
-    }else if (i == points.length-1){
-      deltaX = points[i].x - points[i-1].x;
-      deltaY = points[i].y - points[i-1].y;
-      deltaX2 = points[2].x - points[i].x;
-      deltaY2 = points[2].y - points[i].y
-      deltaX3 = points[3].x - points[3].x;
-      deltaY3 = points[3].y - points[3].y
     }
 
     console.log('delta x y: ', i,  deltaX, deltaY);
@@ -443,7 +447,7 @@ roundedSVGPath( points, r ){
       radius3 = Math.abs(deltaY3)/2;
     }
     prevRadius = radius;
-    radius = Math.min(radius1, radius2, radius3 );
+    radius = Math.min(radius1, radius2 );
     var negRadius = -1 * radius;
 
     console.log('radius: ', radius, ' from ', radius1, radius2, radius3);
@@ -494,10 +498,12 @@ roundedSVGPath( points, r ){
 
       if(deltaY2 < 0){
         // left, then up
+          console.log('- then curve up ', radius);
         svgPath += ' s ' + negRadius + ' 0 ' + negRadius + ' ' + negRadius;
       }
       if(deltaY2 > 0){
         // left, then down
+          console.log('- then curve down ', radius);
         svgPath += ' s ' + negRadius + ' 0 ' + negRadius + ' '+  radius;
       }
     } else if (deltaX > 0){
