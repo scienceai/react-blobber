@@ -104,7 +104,15 @@ class Blobber extends React.Component{
     // construct lower paths
     var lowerLeft = this.orthoBuildLowerLeft(points, max_yPoint);
     console.log('lowerLeft: ', lowerLeft);
-    var lowerRight = this.orthoBuildLowerRight(reversedPoints, max_yPoint);
+    // sort by y then x
+    points.sort(function(a,b){
+        // if(a.y == b.y) return a.x-b.x;
+        // return a.y-b.y;
+        if(a.y == b.y) return a.x-b.x;
+        return b.y-a.y;
+
+    });
+    var lowerRight = this.orthoBuildLowerRight(points, max_yPoint);
     console.log('lowerRight: ', lowerRight);
 
     upperRight.reverse();
@@ -155,7 +163,7 @@ class Blobber extends React.Component{
 // }
 
   var hullLength = 0;
-  while(hull.length != hullLength){
+  while(hull.length != hullLength && hull.length > 2){
 
     hullLength = hull.length;
 
@@ -250,23 +258,27 @@ orthoBuildLowerRight(points, max_yPoint){
   var section = [max_yPoint];
 
   for(var i=0; i < points.length; i++){
-    //console.log('lr x,y: ', points[i].x, points[i].y);
+    console.log('lr x,y: ', points[i].x, points[i].y);
     if(section.length >= 1){
       if(points[i].y == section[section.length-1].y){
         // horizontal line
         if(points[i].x > section[section.length-1].x){
           //right
+          var x = section[section.length-1].x;
+          var y = points[i].y
+          section.push({x: x, y: y});
           section.push(points[i]);
         }
       }
       if(points[i].x == section[section.length-1].x){
         // vertical line
         if(points[i].y < section[section.length-1].y){
+
           section.push(points[i]);
         }
       }
-      if(points[i].y < section[section.length-1].y){
-        if(points[i].x > section[section.length-1].x){
+      if(points[i].x > section[section.length-1].x){
+        if(points[i].y < section[section.length-1].y){
           // up right
           //section[section.length-1].x = points[i].x
           var x = section[section.length-1].x;

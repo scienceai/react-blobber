@@ -8,7 +8,12 @@ var App = React.createClass({
     return {
       dragging: -1,
       //rects: [{x1:30, y1:80, x2:180, y2:120},{x1:60, y1:60, x2:155, y2:100}, {x1:115, y1:15, x2:275, y2:50}]
-      rects: [{x:30, y:30, width:100, height: 50}, {x:150, y:50, width:100, height: 50}]
+      rects: [{x:30, y:250, width:100, height: 50},
+              {x:150, y:200, width:100, height: 50},
+              {x:200, y:100, width:150, height: 75}],
+      rectPoints: [ {x1:47, y1:137, x2:237, y2:252},
+                    {x1:277, y1:115, x2:417, y2: 205},
+                    {x1:332, y1:14, x2:472, y2:104}]
     }
   },
 
