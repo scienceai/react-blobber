@@ -35,18 +35,157 @@ class Blobber extends React.Component{
     //Orthogonal/X-Y Convex Hull
     var points = [];
 
-    // get all the points in the rect Array
 
-    for(var i = 0; i < rects.length; i++){
-      points.push({x: rects[i].x1 - offset, y: rects[i].y1 - offset});
-      points.push({x: rects[i].x1 - offset, y: rects[i].y2 + offset});
-      points.push({x: rects[i].x2 + offset, y: rects[i].y2 + offset});
-      points.push({x: rects[i].x2 + offset, y: rects[i].y1 - offset});
+    // find islands
+    var islands = new Array();
+    for(i = 0; i< rects.length; i++){
+        var isIsland = true;
 
+        for(var j = 0; j < rects.length; j++ ){
+          if(i != j){
+            if(rects[i].x1 >= rects[j].x1 && rects[i].x1 <= rects[j].x2) {
+              isIsland = false;
+            }else if (rects[i].x2 >= rects[j].x1 && rects[i].x2 <= rects[j].x2){
+              isIsland = false;
+            } else if (rects[i].x1 <= rects[j].x1 && rects[i].x2 >= rects[j].x2){
+              isIsland = false;
+            }
+            if(rects[i].y1 >= rects[j].y1 && rects[i].y1 <= rects[j].y2) {
+              isIsland = false;
+            }else if (rects[i].y2 >= rects[j].y1 && rects[i].y2 <= rects[j].y2){
+              isIsland = false;
+            } else if (rects[i].y1 <= rects[j].y1 && rects[i].y2 >= rects[j].y2){
+                isIsland = false;
+            }
+          }
+        }
+        if(isIsland === true) islands.push(i);
+        console.log('isLand?', i, isIsland);
+    }
+    console.log('islands', islands);
+    // find nearest neighbor
+
+    var nearestRect;
+    var connectorThickness = 1;
+    var rectConnects = new Array();
+    for(i = 0; i< islands.length; i++){
+      nearestRect = false;
+      var xMin = 100000;
+      var yMin = 100000;
+      var deltaMin = 100000;
+      for(var j = 0; j < rects.length; j++ ){
+        console.log(i,j);
+
+        if(islands[i] != j){
+
+          var xDelta = (rects[islands[i]].x1 - rects[j].x2 );
+          console.log('delta for ',i , rects[islands[i]].x1, '-', rects[j].x2 );
+
+          var yDelta = (rects[islands[i]].y2 - rects[j].y1);
+          var delta = Math.sqrt(Math.abs(xDelta * xDelta) + Math.abs(yDelta * yDelta));
+          if(delta < deltaMin) {
+            deltaMin = delta;
+            nearestRect = j;
+            xMin = xDelta;
+            yMin = yDelta;
+          }
+          // var xDelta = (rects[islands[i]].x2 - rects[j].x1);
+          // var yDelta = (rects[islands[i]].y1 - rects[j].y2);
+          // var delta = Math.sqrt(Math.abs(xDelta * xDelta) + Math.abs(yDelta * yDelta));
+          // if(delta < deltaMin){
+          //   deltaMin = delta;
+          //   nearestRect = j;
+          // }
+
+          // if( Math.abs(rects[islands[i]].x2 - rects[j].x1) < Math.abs(xMin) ){
+          //   xMin =(rects[islands[i]].x2 - rects[j].x1);
+          //   if(Math.abs(xMin) < deltaMin){
+          //     deltaMin = Math.abs(xMin);
+          //     nearestRect = j;
+          //   }
+          // }
+          // if(Math.abs(rects[islands[i]].y2 - rects[j].y1) < Math.abs(yMin)){
+          //   yMin =(rects[islands[i]].y2 - rects[j].y1);
+          //   if(Math.abs(yMin) < deltaMin){
+          //     deltaMin = Math.abs(yMin);
+          //     nearestRect = j;
+          //   }
+          // }
+          // if(Math.abs(rects[islands[i]].x1 - rects[j].x2) < Math.abs(xMin)){
+          //   xMin =(rects[islands[i]].x1 - rects[j].x2);
+          //   if(Math.abs(xMin) < deltaMin){
+          //     deltaMin = Math.abs(xMin);
+          //     nearestRect = j;
+          //   }
+          // }
+          // if(Math.abs(rects[islands[i]].y1 - rects[j].y2) < Math.abs(yMin)){
+          //   yMin =(rects[islands[i]].y1 - rects[j].y2);
+          //   if(Math.abs(yMin) < deltaMin){
+          //     deltaMin = Math.abs(yMin);
+          //     nearestRect = j;
+          //   }
+          // }
+
+        }
+      }
+      if(nearestRect !== false){
+        console.log('island neighbors: ', islands[i], nearestRect );
+          console.log('Delta ', xDelta, yDelta);
+        //rectConnects.push({x1:rects[islands[i]].x1, y1:rects[islands[i]].y1, x2:rects[islands[i]].x1+10, y2:rects[islands[i]].y1+10});
+        //rectConnects.push({x1:rects[nearestRect].x1, y1:rects[nearestRect].y1, x2:rects[nearestRect].x1+offset, y2:rects[nearestRect].y1+offset});
+        var cX1, cX2, cY1, cY2;
+        if(xMin > 0){
+          console.log('island on right');
+          // island is to the right of neighbor
+          cX1 = rects[nearestRect].x2 - connectorThickness;
+          cX2 = rects[islands[i]].x1 + connectorThickness;
+          //rectConnects.push({x1:rects[nearestRect].x2, y1:rects[nearestRect].y1, x2:rects[islands[i]].x1+offset, y2:rects[nearestRect].y1+offset});
+        } else {
+          //island is to the left
+            console.log('island on left');
+          cX1 = rects[islands[i]].x2 - connectorThickness;
+          cX2 = rects[nearestRect].x1 + connectorThickness;
+          //rectConnects.push({ x1:rects[islands[i]].x2, y1:rects[islands[i]].y1, x2:rects[nearestRect].x1 + offset, y2:rects[islands[i]].y1 + offset,});
+        }
+        if(yMin> 0){
+          // island is below neighbor
+          //cY1 = rects[islands[i]].y1;
+          //cY2 = rects[islands[i]].y1 + connectorThickness;
+          cY1 = rects[nearestRect].y2 + ((rects[islands[i]].y1 - rects[nearestRect].y2)  / 2);
+          cY2 = cY1 + connectorThickness;
+        } else {
+          // island is above neighbor
+            //cY1 = rects[nearestRect].y1;
+            cY1 = rects[islands[i]].y2 + ((rects[nearestRect].y1 -rects[islands[i]].y2)/2);
+            cY2 = cY1 + connectorThickness;
+        }
+        console.log('connector ', cX1, cY1, cX2, cY2)
+        rectConnects.push({x1:cX1, y1:cY1, x2:cX2, y2:cY2});
+
+      }
     }
 
-    console.log('points: ', JSON.stringify(points));
+    // add connectors to rects
+    rects.push.apply(rects, rectConnects);
 
+    // get all the points in the rect Array and add offset
+    for(var i = 0; i < rects.length; i++){
+      rects[i].x1 = rects[i].x1 - offset;
+      rects[i].y1 = rects[i].y1 - offset;
+      rects[i].x2 = rects[i].x2 + offset;
+      rects[i].y2 = rects[i].y2 + offset;
+    }
+
+    // convert rects to points
+    for(var i = 0; i < rects.length; i++){
+      points.push({x: rects[i].x1, y: rects[i].y1});
+      points.push({x: rects[i].x1, y: rects[i].y2});
+      points.push({x: rects[i].x2, y: rects[i].y2});
+      points.push({x: rects[i].x2, y: rects[i].y1});
+    }
+
+
+    //console.log('points: ', JSON.stringify(points));
     // find min and max values of y
     var min_y = Number.POSITIVE_INFINITY;
     var min_yPoint;
@@ -75,20 +214,17 @@ class Blobber extends React.Component{
         max_x = points[i].x;
       }
     }
-    //debugger;
     // sort points by x coordinate, then by y
     points.sort(function(a,b){
-        // if(a.y == b.y) return a.x-b.x;
-        // return a.y-b.y;
         if(a.x == b.x) return a.y-b.y;
         return a.x-b.x;
 
     });
 
-    console.log('sorted points: ', JSON.stringify(points));
+    //console.log('sorted points: ', JSON.stringify(points));
 
-    console.log('minYPoint: ', min_yPoint);
-    console.log('maxYPoint: ', max_yPoint);
+    //console.log('minYPoint: ', min_yPoint);
+    //console.log('maxYPoint: ', max_yPoint);
 
     // duplicate array
     var reversedPoints = points.slice(0);
@@ -97,23 +233,21 @@ class Blobber extends React.Component{
 
     // construct upper paths
     var upperLeft = this.orthoBuildUpperLeft(points, min_yPoint);
-    console.log('upperLeft: ', upperLeft );
+    //console.log('upperLeft: ', upperLeft );
     var upperRight = this.orthoBuildUpperRight(reversedPoints, max_xPoint);
-    console.log('upperRight: ', upperRight );
+    //console.log('upperRight: ', upperRight );
 
     // construct lower paths
     var lowerLeft = this.orthoBuildLowerLeft(points, max_yPoint);
-    console.log('lowerLeft: ', lowerLeft);
-    // sort by y then x
+    //console.log('lowerLeft: ', lowerLeft);
+
+    // resort by y then x
     points.sort(function(a,b){
-        // if(a.y == b.y) return a.x-b.x;
-        // return a.y-b.y;
         if(a.y == b.y) return a.x-b.x;
         return b.y-a.y;
-
     });
     var lowerRight = this.orthoBuildLowerRight(points, max_yPoint);
-    console.log('lowerRight: ', lowerRight);
+    //console.log('lowerRight: ', lowerRight);
 
     upperRight.reverse();
     lowerRight.reverse();
@@ -121,21 +255,9 @@ class Blobber extends React.Component{
 
 
     var hull = upperLeft.concat(upperRight, lowerRight, lowerLeft);
-    //var hull = lowerRight;
-    //var hull = lowerLeft.concat(lowerRight, upperLeft, upperRight);
-    console.log('hull', JSON.stringify(hull));
+    //console.log('hull', JSON.stringify(hull));
 
-    // remove repeats
-    // for(i = 1; i < hull.length; i++){
-    //   if(hull[i].x == hull[i-1].x && hull[i].y == hull[i-1].y){
-    //     // remove duplicate
-    //     hull.splice(i, 1);
-    //     i--;
-    //   }
-    // }
-    //      console.log('cleaned hull', JSON.stringify(hull));
-
-  //  remove all duplicate points
+    //  remove all duplicate points
   hull = hull.reduce((prev, curr) => {
      if (!prev.some(point => point.x === curr.x && point.y === curr.y)) {
        prev.push(curr);
@@ -143,25 +265,7 @@ class Blobber extends React.Component{
       return prev;
    }, []);
 
-  // remove redundant points on lines
-//   var hullLength = 0;
-//   while(hull.length != hullLength){
-//     hullLength = hull.length;
-//   for(i=2; i<hull.length; i++){
-//     if(hull[i-2].x == hull[i-1].x && hull[i-1].x == hull[i].x){
-//       console.log('remove: ', hull[i-2].x, hull[i-1].x, hull[i].x );
-//       hull.splice(i-1, 1);
-//     }
-//   }
-//   for(i=2; i<hull.length; i++){
-//     if(hull[i-2].y == hull[i-1].y && hull[i-1].y == hull[i].y){
-//       console.log('remove: ', hull[i-2].y, hull[i-1].y, hull[i].y );
-//       hull.splice(i-1, 1);
-//
-//     }
-//   }
-// }
-
+  // clean up redundant points on a line
   var hullLength = 0;
   while(hull.length != hullLength && hull.length > 2){
 
@@ -172,7 +276,7 @@ class Blobber extends React.Component{
       if(x2i > hull.length-1) x2i = (x2i - hull.length);
       var x3i = i+2;
       if(x3i > hull.length-1) x3i = (x3i - hull.length);
-      console.log('is ', hull.length, i, x2i, x3i );
+      //console.log('is ', hull.length, i, x2i, x3i );
       if(hull[i].x == hull[x2i].x && hull[i].x == hull[x3i].x){
         //console.log('remove: ', hull[i-2].x, hull[i-1].x, hull[i].x );
         hull.splice(x2i, 1);
@@ -188,32 +292,13 @@ class Blobber extends React.Component{
         hull.splice(y2i, 1);
       }
     }
-
-    // for(i=2; i<=hull.length+2; i++){
-    //   //if(i > hull.length-2) i = hull.length - (i - hull.length-1);
-    //   if(hull[i-2].y == hull[i-1].y && hull[i-1].y == hull[i].y){
-    //     console.log('remove: ', hull[i-2].y, hull[i-1].y, hull[i].y );
-    //     hull.splice(i-1, 1);
-    //
-    //   }
-    // }
  }
   var closeLine = [{x: hull[hull.length-1].x, y: hull[hull.length-1].y},
                    {x: hull[0].x, y: hull[0].y}];
 
      hull = hull.concat([{x: hull[0].x, y: hull[0].y}]);
      //console.log('closeLine: ', JSON.stringify(closeLine));
-
-     console.log('cleaned hull', JSON.stringify(hull));
-
-    //  hull = upperLeft;
-    // hull = upperRight;
-    //
-    // hull = lowerRight;
-
-    // hull = lowerLeft;
-
-
+     //console.log('cleaned hull', JSON.stringify(hull));
     return(hull);
   }
 
@@ -228,12 +313,16 @@ orthoBuildLowerLeft(points){
         // horizontal line
         if(points[i].x >section[section.length-1].x){
           //right
+          var y = section[section.length-1].y;
+          var x = points[i].x
+          section.push({x: x, y: y});
           section.push(points[i]);
         }
       }
       if(points[i].x == section[section.length-1].x){
         // vertical line
         if(points[i].y > section[section.length-1].y){
+
           section.push(points[i]);
         }
       }
@@ -258,40 +347,32 @@ orthoBuildLowerRight(points, max_yPoint){
   var section = [max_yPoint];
 
   for(var i=0; i < points.length; i++){
-    console.log('lr x,y: ', points[i].x, points[i].y);
+    //console.log('lr x,y: ', points[i].x, points[i].y);
     if(section.length >= 1){
       if(points[i].y == section[section.length-1].y){
         // horizontal line
-        if(points[i].x > section[section.length-1].x){
+        if(points[i].x >= section[section.length-1].x){
           //right
-          var x = section[section.length-1].x;
-          var y = points[i].y
-          section.push({x: x, y: y});
           section.push(points[i]);
         }
       }
       if(points[i].x == section[section.length-1].x){
         // vertical line
-        if(points[i].y < section[section.length-1].y){
-
+        if(points[i].y <= section[section.length-1].y){
           section.push(points[i]);
         }
       }
-      if(points[i].x > section[section.length-1].x){
-        if(points[i].y < section[section.length-1].y){
+      if(points[i].x >= section[section.length-1].x){
+        if(points[i].y <= section[section.length-1].y){
           // up right
           //section[section.length-1].x = points[i].x
+          //console.log('up right')
           var x = section[section.length-1].x;
           var y = points[i].y
           section.push({x: x, y: y});
           section.push(points[i]);
         }
       }
-    } else {
-      // first point
-      // if(points[i].y == max_yPoint){
-      //   section.push(points[i]);
-      // }
     }
   }
   return section;
@@ -393,13 +474,13 @@ roundedSVGPath( points, r ){
     prevRadius = Math.abs(deltaY)/2;
   }
   radius = prevRadius;
-  console.log('prevRadius', prevRadius);
+  //console.log('prevRadius', prevRadius);
 
   for (var i = 1; i < points.length; i++){
 
     // some logic to deel with closing the loop
     if(i == 0){
-      console.log('i==0');
+      //console.log('i==0');
       deltaX = points[i].x - points[points.length-1].x;
       deltaY = points[i].y - points[points.length-1].y;
       deltaX2 = points[i+1].x - points[i].x;
@@ -407,7 +488,7 @@ roundedSVGPath( points, r ){
       deltaX3 = points[i+2].x - points[i+1].x;
       deltaY3 = points[i+2].y - points[i+1].y;
     } else if(i < points.length-2){
-      console.log('i<length-2', i);
+      //console.log('i<length-2', i);
       deltaX = points[i].x - points[i-1].x;
       deltaY = points[i].y - points[i-1].y;
       deltaX2 = points[i+1].x - points[i].x;
@@ -415,7 +496,7 @@ roundedSVGPath( points, r ){
       deltaX3 = points[i+2].x - points[i+1].x;
       deltaY3 = points[i+2].y - points[i+1].y;
     } else if (i == points.length-2){
-      console.log('i==length-2', points.length-2, i);
+      //console.log('i==length-2', points.length-2, i);
       deltaX = points[i].x - points[i-1].x;
       deltaY = points[i].y - points[i-1].y;
       deltaX2 = points[i+1].x - points[i].x;
@@ -423,7 +504,7 @@ roundedSVGPath( points, r ){
       deltaX3 = points[1].x - points[0].x;
       deltaY3 = points[1].y - points[0].y
     }else if (i == points.length-1){
-      console.log('i==length-1', points.length-1, i);
+      //console.log('i==length-1', points.length-1, i);
       deltaX = points[i].x - points[i-1].x;
       deltaY = points[i].y - points[i-1].y;
       deltaX2 = points[1].x - points[0].x;
@@ -432,9 +513,9 @@ roundedSVGPath( points, r ){
       deltaY3 = points[2].y - points[1].y
     }
 
-    console.log('delta x y: ', i,  deltaX, deltaY);
-    console.log('delta2 x y: ', i,  deltaX2, deltaY2);
-    console.log('delta3 x y: ', i,  deltaX3, deltaY3);
+    //console.log('delta x y: ', i,  deltaX, deltaY);
+    //console.log('delta2 x y: ', i,  deltaX2, deltaY2);
+    //console.log('delta3 x y: ', i,  deltaX3, deltaY3);
     var rX = 100;
     var rY = 100;
 
@@ -462,17 +543,17 @@ roundedSVGPath( points, r ){
     radius = Math.min(radius1, radius2 );
     var negRadius = -1 * radius;
 
-    console.log('radius: ', radius, ' from ', radius1, radius2, radius3);
+    //console.log('radius: ', radius, ' from ', radius1, radius2, radius3);
     //svgPath += ' L ' + (points[i].x ) + ' ' + (points[i].y );
 
     if(deltaY < 0){
       // up
 
       if (svgPath == 'M'){
-        console.log('start ', points[0].x, ',', points[0].y, ' - ', radius);
+        //console.log('start ', points[0].x, ',', points[0].y, ' - ', radius);
         svgPath += ' ' + points[0].x + ' ' + (points[0].y - radius);
       }
-      console.log('up ', deltaY);
+      //console.log('up ', deltaY);
       svgPath += ' l ' + (deltaX) + ' ' + (deltaY + prevRadius + radius);
 
       if(deltaX2 < 0){
@@ -480,12 +561,12 @@ roundedSVGPath( points, r ){
         svgPath += ' s 0 ' + negRadius + ' ' + negRadius + ' ' + negRadius;
       } else if (deltaX2 > 0){
         // up then right
-        console.log(' then curve right ', radius);
+        //console.log(' then curve right ', radius);
         svgPath += ' s 0 ' + negRadius + ' ' + radius + ' ' + negRadius;
       }
     } else if(deltaY > 0){
       //down
-      console.log('down ', deltaY);
+      //console.log('down ', deltaY);
       if (svgPath == 'M') svgPath += ' ' + points[0].x + ' ' + (points[0].y + radius);
 
       svgPath += ' l ' + (deltaX) + ' ' + (deltaY - (prevRadius + radius) );
@@ -500,41 +581,41 @@ roundedSVGPath( points, r ){
       // left
 
       if (svgPath == 'M'){
-        console.log('start ', points[0].x, '-',  radius, ',', points[0].y);
+        //console.log('start ', points[0].x, '-',  radius, ',', points[0].y);
         svgPath += ' ' + (points[0].x - radius) + ' ' + (points[0].y);
       }
 
-      console.log('left ', deltaX);
+      //console.log('left ', deltaX);
 
       svgPath += ' l ' + (deltaX + (prevRadius + radius)) + ' ' + (deltaY);
 
       if(deltaY2 < 0){
         // left, then up
-          console.log('- then curve up ', radius);
+          //console.log('- then curve up ', radius);
         svgPath += ' s ' + negRadius + ' 0 ' + negRadius + ' ' + negRadius;
       }
       if(deltaY2 > 0){
         // left, then down
-          console.log('- then curve down ', radius);
+          //console.log('- then curve down ', radius);
         svgPath += ' s ' + negRadius + ' 0 ' + negRadius + ' '+  radius;
       }
     } else if (deltaX > 0){
         // right
 
         if (svgPath == 'M'){
-            console.log('start ', points[0].x, '+',  radius, ',', points[0].y);
+            //console.log('start ', points[0].x, '+',  radius, ',', points[0].y);
            svgPath += ' ' + (points[0].x + prevRadius) + ' ' + (points[0].y);
         }
-        console.log('right ',   deltaX, ' - (',  prevRadius, ' + ' + radius, ')');
+        //console.log('right ',   deltaX, ' - (',  prevRadius, ' + ' + radius, ')');
 
         svgPath += ' l ' + (deltaX - (prevRadius + radius)) + ' ' + (deltaY);
         if(deltaY2 > 0){
-          console.log('- then curve down ', radius);
+          //console.log('- then curve down ', radius);
           // right, then down
           svgPath += ' s ' + radius + ' 0 ' + radius + ' ' + radius;
         }
         if(deltaY2 < 0){
-          console.log('- then curve up ', radius);
+          //console.log('- then curve up ', radius);
           // right, then up
           svgPath += ' s ' + ' ' + radius + ' 0 ' + radius + ' ' + negRadius;
         }
@@ -544,49 +625,40 @@ roundedSVGPath( points, r ){
 
   // close the shape
 
-  console.log('svgPath: ', svgPath);
+  //console.log('svgPath: ', svgPath);
   return svgPath;
 }
 
 
   render() {
 
-
     var rects = this.rectPoints
     var hull = this.orthoConvexHull(rects, this.props.pathOffset);
     //hull.reverse();
     var roundedHullStr = this.roundedSVGPath(hull, this.props.cornerRadius);
-    console.log('hull', hull);
+    //console.log('hull', hull);
 
     var svgPointsStr = '';
     for(var i=0; i<hull.length; i++){
-      console.log('point: ', hull[i].x);
+      //console.log('point: ', hull[i].x);
       svgPointsStr = svgPointsStr + hull[i].x + ',' + hull[i].y + ' ';
     }
 
     var svgRects = rects.map(function(rect, id){
       return(
-          <rect fill="grey" x={rect.x1} y={rect.y1} width={rect.x2-rect.x1} height={rect.y2-rect.y1} key={'svgrect_' + id}/>
+          <rect opacity=".5" fill="grey" x={rect.x1} y={rect.y1} width={rect.x2-rect.x1} height={rect.y2-rect.y1} key={'svgrect_' + id}/>
       )
 
     });
 
-    // <path fill="green" opacity=".125" stroke="green" d={roundedHullStr}/>
-    // <path fill="orange" opacity=".125" stroke="green" d={roundedHullStr2}/>
       return(
-        <div className='svgContainer' style={{width:'100%', height:'100%'}}>
+        <div className='svgContainer' style={{position:'absolute', left:'0px', top:'0px', width:'100%', height:'100%'}}>
           <svg width='100%' height='100%'>
-            {svgRects}
-            <polyline fill="none" opacity=".25" stroke="blue" points={svgPointsStr}/>
+            {/*svgRects*/}
+            {/*<polyline fill="none" opacity=".25" stroke="blue" points={svgPointsStr}/>*/}
             <path fill="purple" opacity=".5" stroke="black" d={roundedHullStr}/>
           </svg>
         </div>
       );
-    // var elapsed = Math.round(this.props.elapsed  / radius0);
-    // var seconds = elapsed / radius + (elapsed % radius ? '' : '.0' );
-    // var message =
-    //   `React has been successfully running for ${seconds} seconds.`;
-    //
-    // return <p>{message}</p>;
-  }
+    }
 }
