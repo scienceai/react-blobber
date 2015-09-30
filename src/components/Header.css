@@ -1,0 +1,18 @@
+.header {
+  display: flex;
+  align-items: center;
+  height: var(--page-header-height);
+  width: 100%;
+  background-color: var(--header-background-color);
+  border-top: 1px solid var(--color_grey_300);
+  border-bottom: 1px solid var(--color_grey_300);
+  box-shadow: var(--shadow-active);
+  position: fixed;
+  top: 0;
+  z-index: 50;
+}
+
+.header > h1 {
+  padding: 12px;
+  padding-left: 36px;
+}

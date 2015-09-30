@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 18.1.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+<g id="Layer_1">
+	<circle fill="#E0E0E0" cx="12" cy="12" r="12"/>
+	<g>
+		<g>
+			<g>
+				<g>
+					<path fill="none" stroke="#FFFFFF" stroke-width="1.5" stroke-miterlimit="10" d="M7.1,9c2.8,1.5,4.9,3.7,4.9,7.2"/>
+					<g>
+						<polygon fill="#FFFFFF" points="6.6,11.8 3.7,7.5 8.9,7 						"/>
+					</g>
+				</g>
+			</g>
+		</g>
+		<g>
+			<g>
+				<g>
+					<path fill="none" stroke="#FFFFFF" stroke-width="1.5" stroke-miterlimit="10" d="M16.9,9c-2.8,1.5-4.9,3.7-4.9,7.2"/>
+					<g>
+						<polygon fill="#FFFFFF" points="15.1,7 20.3,7.5 17.4,11.8 						"/>
+					</g>
+				</g>
+			</g>
+		</g>
+		<line fill="none" stroke="#FFFFFF" stroke-width="1.5" stroke-miterlimit="10" x1="12" y1="15.4" x2="12" y2="20.1"/>
+	</g>
+</g>
+<g id="Isolation_Mode">
+</g>
+</svg>

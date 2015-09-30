@@ -1,0 +1,772 @@
+:root {
+  /* Material colors */
+  --color_grey_50: #FAFAFA;
+  --color_grey_100: #F5F5F5;
+  --color_grey_200: #EEEEEE;
+  --color_grey_300: #E0E0E0;
+  --color_grey_400: #BCBCBC;
+  --color_grey_500: #9E9E9E;
+
+  --color_blue_50: #E3F2FD;
+  --color_blue_100: #BBDEFB;
+  --color_blue_200: #90CAF9;
+  --color_blue_300: #64B5F6;
+  --color_blue_400: #42A5F5;
+  --color_blue_500: #2196F3;
+
+  /* Translucent Greys/blacks for tinting */
+  --color_k002_a: rgba(0, 0, 0, .02);
+  --color_k005_a: rgba(0, 0, 0, .05);
+  --color_k01_a: rgba(0, 0, 0, .1);
+  --color_k015_a: rgba(0, 0, 0, .15);
+  --color_k02_a: rgba(0, 0, 0, .2);
+  --color_k03_a: rgba(0, 0, 0, .3);
+  --color_k04_a: rgba(0, 0, 0, .4);
+  --color_k05_a: rgba(0, 0, 0, .5);
+  --color_k06_a: rgba(0, 0, 0, .6);
+  --color_k07_a: rgba(0, 0, 0, .7);
+  --color_k08_a: rgba(0, 0, 0, .8);
+  --color_k09_a: rgba(0, 0, 0, .9);
+  --color_k10_a: rgba(0, 0, 0, 1);
+
+  /* opaque blue highlight colors */
+  --color_hl01-blue: #F7FAFC;
+  --color_hl02-blue: #F0F6FA;
+  --color_hl03-blue: #E9F1F7;
+  --color_hl04-blue: #E1ECF5;
+  --color_hl05-blue: #DAE7F2;
+  --color_hl06-blue: #D3E3F0;
+  --color_hl07-blue: #CBDEEE;
+  --color_hl08-blue: #C4D9EB;
+  --color_hl09-blue: #BDD5E9;
+  --color_hl10-blue: #B5D0E6;
+
+  /* Equivalent Tranparent blue highlight colors */
+  --color_hl01_a-blue: rgba(181, 208, 230, .1);
+  --color_hl02_a-blue: rgba(181, 208, 230, .2);
+  --color_hl03_a-blue: rgba(181, 208, 230, .3);
+  --color_hl04_a-blue: rgba(181, 208, 230, .4);
+  --color_hl05_a-blue: rgba(181, 208, 230, .5);
+  --color_hl06_a-blue: rgba(181, 208, 230, .6);
+  --color_hl07_a-blue: rgba(181, 208, 230, .7);
+  --color_hl08_a-blue: rgba(181, 208, 230, .8);
+  --color_hl09_a-blue: rgba(181, 208, 230, .9);
+  --color_hl10_a-blue: rgba(181, 208, 230, 1);
+
+  /* Opaque Yellow*/
+  --color_hl01-yellow: #FEFCF7;
+  --color_hl02-yellow: #FDFAEF;
+  --color_hl03-yellow: #FDF7E6;
+  --color_hl04-yellow: #FCF5DE;
+  --color_hl05-yellow: #FAEFCE;
+  --color_hl06-yellow: #FAEFCE;
+  --color_hl07-yellow: #F9EDC6;
+  --color_hl08-yellow: #F9EABD;
+  --color_hl09-yellow: #F8E8B5;
+  --color_hl10-yellow: #F7E5AD;
+
+  /* Translucent Yellow */
+  --color_hl01_a-yellow: rgba(247, 229, 173, .1);
+  --color_hl02_a-yellow: rgba(247, 229, 173, .2);
+  --color_hl03_a-yellow: rgba(247, 229, 173, .3);
+  --color_hl04_a-yellow: rgba(247, 229, 173, .4);
+  --color_hl05_a-yellow: rgba(247, 229, 173, .5);
+  --color_hl06_a-yellow: rgba(247, 229, 173, .6);
+  --color_hl07_a-yellow: rgba(247, 229, 173, .7);
+  --color_hl08_a-yellow: rgba(247, 229, 173, .8);
+  --color_hl09_a-yellow: rgba(247, 229, 173, .9);
+  --color_hl10_a-yellow: rgba(247, 229, 173,  1);
+
+  /* Translucent Brick Red */
+  --color_hl01_a-red: rgba(217, 168, 163, .1);
+  --color_hl02_a-red: rgba(217, 168, 163, .2);
+  --color_hl03_a-red: rgba(217, 168, 163, .3);
+  --color_hl04_a-red: rgba(217, 168, 163, .4);
+  --color_hl05_a-red: rgba(217, 168, 163, .5);
+  --color_hl06_a-red: rgba(217, 168, 163, .6);
+  --color_hl07_a-red: rgba(217, 168, 163, .7);
+  --color_hl08_a-red: rgba(217, 168, 163, .8);
+  --color_hl09_a-red: rgba(217, 168, 163, .9);
+  --color_hl10_a-red: rgba(217, 168, 163,  1);
+
+  /* define the selection highlight colors */
+  /* opaque */
+  --color_hl01: var(--color_hl01-blue);
+  --color_hl02: var(--color_hl02-blue);
+  --color_hl03: var(--color_hl03-blue);
+  --color_hl04: var(--color_hl04-blue);
+  --color_hl05: var(--color_hl05-blue);
+  --color_hl06: var(--color_hl06-blue);
+  --color_hl07: var(--color_hl07-blue);
+  --color_hl08: var(--color_hl08-blue);
+  --color_hl09: var(--color_hl09-blue);
+  --color_hl10: var(--color_hl10-blue);
+
+  /* equivalent transparent form*/
+  --color_hl01_a: var(--color_hl01_a-blue);
+  --color_hl02_a: var(--color_hl02_a-blue);
+  --color_hl03_a: var(--color_hl03_a-blue);
+  --color_hl04_a: var(--color_hl04_a-blue);
+  --color_hl05_a: var(--color_hl05_a-blue);
+  --color_hl06_a: var(--color_hl06_a-blue);
+  --color_hl07_a: var(--color_hl07_a-blue);
+  --color_hl08_a: var(--color_hl08_a-blue);
+  --color_hl09_a: var(--color_hl09_a-blue);
+  --color_hl10_a: var(--color_hl10_a-blue);
+
+  /* opaque active form of highlight color */
+  --color_hl01-active: var(--color_hl01-yellow);
+  --color_hl02-active: var(--color_hl02-yellow);
+  --color_hl03-active: var(--color_hl03-yellow);
+  --color_hl04-active: var(--color_hl04-yellow);
+  --color_hl05-active: var(--color_hl05-yellow);
+  --color_hl06-active: var(--color_hl06-yellow);
+  --color_hl07-active: var(--color_hl07-yellow);
+  --color_hl08-active: var(--color_hl08-yellow);
+  --color_hl09-active: var(--color_hl09-yellow);
+  --color_hl10-active: var(--color_hl10-yellow);
+
+  /* translucent active form of highlight color */
+  --color_hl01-active_a: var(--color_hl01_a-yellow);
+  --color_hl02-active_a: var(--color_hl02_a-yellow);
+  --color_hl03-active_a: var(--color_hl03_a-yellow);
+  --color_hl04-active_a: var(--color_hl04_a-yellow);
+  --color_hl05-active_a: var(--color_hl05_a-yellow);
+  --color_hl06-active_a: var(--color_hl06_a-yellow);
+  --color_hl07-active_a: var(--color_hl07_a-yellow);
+  --color_hl08-active_a: var(--color_hl08_a-yellow);
+  --color_hl09-active_a: var(--color_hl09_a-yellow);
+  --color_hl10-active_a: var(--color_hl10_a-yellow);
+
+  /* UI Element Style and colors */
+  --color_light-light-grey: #e6e6e6;
+  --color_base-grey: var(--color_grey_200);
+  --color_base-grey_trans: rgba(238, 238, 238, 0);
+  --color_panel-grey: var(--color_grey_100);
+  --color_unrich-black: #434343;
+  --color_accent_light: var(--color_blue_300);
+  --color_accent: var(--color_blue_500);
+  --color_accent_dark: var(--color_blue_700);
+
+  --inactive-bg-color: whitesmoke;
+  --active-bg-color: white;
+  --child-bg-color:#FAFAFA;
+
+  --ruling_section_color_minor: var(--color_k005_a);
+  --ruling_section_color_major: var(--color_k01_a);
+
+  --shadow_active: 2px 2px 4px var(--color_grey_400);
+  --shadow_inactive: 0 0 4px var(--color_grey_400);
+
+  --text_face_ui: "roboto", sans-serif;
+  --text_face_body_sans: "open-sans", sans-serif;
+  --text_font_body_sans:  normal normal 400 13px/18px var(--text_face_body_sans);
+  --text_face_body_serif: "libre baskerville", "times", serif;
+  --text_font_ui_normal: normal normal 400 13px/18px var(--text_face_ui);
+  --text_font_ui_header: normal normal 400 16px/20px var(--text_face_ui);
+  --text_font_ui_caption: normal normal 400 13px/18px var(--text_face_ui);
+  --text_font_ui_label: normal normal 400 13px/15px var(--text_face_ui);
+  --text_font_ui_light: normal normal 300 13px/18px var(--text_face_ui);
+  --text-weight_light: 300;
+
+  --text_color_light: var(--color_grey_400);
+  --text_color_ghost: var(--color_k01_a);
+  --text_color: var(--color_unrich-black);
+  --text_color_link: var(--color_accent);
+  --text_color_link--active: var(--color_accent_light);
+  --type_color_subtext: #c9c9c9;
+
+  /* constants */
+  --major-grid: 32px;
+  --semi-grid: 24px;
+  --minor-grid: 16px;
+  --min-grid: 8px;
+
+  /* Pixels per milisecond for size transitions */
+  --ppms: .5ms;
+
+  --header-background-color: white;
+  --kanban-board-background-color: #E6E6E6;
+  --card-body-background-color: var(--color_grey_100);
+  --column-background-color: var(--color_grey_200);
+  --card-line-background-color: var(--color_grey_300);
+  --card-box-shadow-color: var(--color_grey_400);
+  --card-background-color: #FFFFFF;
+  --inactive-card-background-color: var(--color_grey_50);
+  --inactive-card-hl-bg-color: #E8E5D9;
+  --inactive-hovered-card-background-color: var(--color_grey_300);
+  --row-highlight-color: var(--color_hl03_a-yellow);
+  /*#FDFAF0*/
+
+  --text_color_link: var(--color_blue_500);
+  --text_color_link--active: var(--color_blue_300);
+
+  --page-header-height: 56px;
+  --navigation-bar-height: 50px;
+  --column-min-width: 320px;
+  --column-width: 320px;
+  --column-header-height: 88px;
+  --column-footer-height: 50px;
+  --column-height: calc(
+    100vh -
+    var(--page-header-height) -
+    var(--navigation-bar-height) -
+    36px -
+    var(--column-header-height) -
+    var(--column-footer-height) -
+    calc(20px * 2)
+  );
+  --highlight-row-height: 304px;
+  --vertical-offset-height: 104px;
+
+  --shadow-active: 2px 2px 4px var(--color_grey_400);
+  --bevel-size: 24px;
+  --card-box-shadow: 1px 2px 4px var(--card-box-shadow-color);
+}
+
+/*------------------------------------*\
+    #Reset Styles
+\*------------------------------------*/
+
+/* http://meyerweb.com/eric/tools/css/reset/
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+/*------------------------------------*\
+    #Basic text styles
+\*------------------------------------*/
+
+body {
+  font-family: 'Roboto', sans-serif;
+  font-size: 13px;
+  line-height: 24px;
+  font-weight: normal;
+  height: 100%;
+  letter-spacing: .05em;
+}
+
+p {
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+a {
+  color: var(--text_color_link);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+  color: var(--text_color_link--active);
+}
+
+a:active {
+  text-decoration: none;
+}
+
+.display-none {
+  display: none;
+}
+
+.hidden {
+  display: none;
+}
+
+.no-wrap {
+  white-space: nowrap;
+}
+
+h1 {
+  font-size: 24px;
+  line-height: 24px;
+  font-weight: 400;
+}
+
+h2 {
+  font-size: 20px;
+  line-height: 20px;
+  font-weight: 400;
+}
+
+h3 {
+  font-size: 16px;
+  line-height: 16px;
+  font-weight: 400;
+}
+
+h4 {
+  font-size: 14px;
+  line-height: 14px;
+  font-weight: 400;
+}
+
+/*------------------------------------*\
+    #Reset OS Gui Base styles
+\*------------------------------------*/
+
+/*Clear out focus glows*/
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+  margin: 0;
+  padding: 0;
+  border: none;
+  font: inherit;
+  line-height: normal;
+}
+button:focus{
+  outline: none;
+}
+
+/*------------------------------------*\
+    #Reset OS GUI Button Styles
+\*------------------------------------*/
+
+[role="button"],
+input[type="submit"],
+input[type="reset"],
+input[type="button"],
+button {
+  background: none repeat scroll 0 0 transparent;
+  border: medium none;
+  border-spacing: 0;
+  color: inherit;
+  font-family: "Roboto", sans-serif;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  text-decoration: none;
+  text-indent: 0;
+  appearance: none;  /* for mobile safari */
+  box-sizing: content-box;
+  white-space: nowrap
+}
+
+/*------------------------------------*\
+    #Standard Button Styles
+\*------------------------------------*/
+
+.button__icon--16px {
+  background-color: transparent; /* make the button transparent */
+  background-repeat: no-repeat;  /* make the background image appear only once */
+  background-position: 0 0;  /* equivalent to 'top left' */
+  border: none;           /* assuming we don't want any borders */
+  cursor: pointer;        /* make the cursor like hovering over an <a> element */
+  height: 16px;           /* make this the size of your image */
+  width: 16px;
+  vertical-align: middle; /* align the text vertically centered */
+  opacity: 0.3;
+  transition: opacity .2s;
+}
+
+.button__icon--16px:hover, .button__icon--16px.active {
+  opacity: 1.0;
+  transition: opacity .2s;
+}
+
+.button__icon--16px.inactive:hover {
+  opacity: 0.3;
+  transition: opacity .2s;
+}
+
+.button__icon--24px {
+  background-color: transparent; /* make the button transparent */
+  background-repeat: no-repeat;  /* make the background image appear only once */
+  background-position: 0 0;  /* equivalent to 'top left' */
+  border: none;           /* assuming we don't want any borders */
+  cursor: pointer;        /* make the cursor like hovering over an <a> element */
+  height: 24px;           /* make this the size of your image */
+  width: 24px;
+  vertical-align: middle; /* align the text vertically centered */
+  opacity: 0.3;
+  transition: opacity .2s;
+}
+
+.button__icon--24px.white{
+  opacity: 1;
+
+}
+.button__icon--24px:hover, .button__icon--24px.active {
+  opacity: 1.0;
+  transition: opacity .2s;
+}
+
+.button__icon--24px.white:hover, .button__icon--24px.active.white {
+  opacity: .6;
+  transition: opacity .2s;
+}
+
+.button__icon--24px.inactive:hover {
+  opacity: 0.3;
+  transition: opacity .2s;
+}
+
+.button__icon--24px.white.icon--brain-cloud {
+  background-image: url('../static/images/icon_braincloud_white_24px.svg');
+
+}
+
+.button__icon--24px.icon--add {
+  background-image: url('../static/images/icon_add_24px.svg');
+}
+
+.button__icon--24px.icon--trash {
+  background-image: url('../static/images/icon_trash_24px.svg');
+}
+
+.button__icon--24px.icon--settings {
+  background-image: url('../static/images/icon_gear_24px.svg');
+}
+
+.button__icon--24px.icon--edit {
+  background-image: url('../static/images/icon_pencil_24px.svg');
+}
+
+.button__icon--24px.icon--delete {
+  background-image: url('../static/images/icon_delete_24px.svg');
+}
+.button__icon--24px.icon--pop {
+  background-image: url('../static/images/icon_pop_24px.svg');
+}
+
+.button__icon--24px.icon--download {
+  background-image: url('../static/images/icon_download_24px.svg');
+}
+
+.button__icon--24px.icon--drag {
+  background-image: url('../static/images/icon_drag_24px.svg');
+}
+
+.button__icon--24px.icon--expand--less {
+  background-image: url('../static/images/icon_expand_less_24px.svg');
+  transition: rotate .2s;
+}
+
+.button__icon--24px.icon--expand--more {
+  background-image: url('../static/images/icon_expand_less_24px.svg');
+  transform: rotate(-180deg);
+  transition: rotate .2s;
+}
+
+.button__icon--24px.icon--dropdown {
+  background-image: url('../static/images/icon_dropDown_24px.svg');
+}
+
+.button__icon--24px.icon--home {
+  background-image: url('../static/images/icon_home_24px.svg');
+}
+
+.button__icon--24px.icon--time {
+  background-image: url('../static/images/icon_time_24px.svg');
+}
+
+.button__icon--24px.icon--check {
+  background-image: url('../static/images/icon_check_24px.svg');
+}
+
+.button__icon--24px.icon--email {
+  background-image: url('../static/images/icon_email_24px.svg');
+}
+
+.button__icon--24px.icon--filter-list {
+  background-image: url('../static/images/icon_filter_list_24px.svg');
+}
+
+.button__icon--24px.icon--inbox {
+  background-image: url('../static/images/icon_inbox_24px.svg');
+}
+
+.button__icon--24px.icon--sort {
+  background-image: url('../static/images/icon_sort_24px.svg');
+}
+
+.button__icon--24px.icon--glasses {
+  background-image: url('../static/images/icon_voicemail_24px.svg');
+  transform: rotate(180deg);
+}
+
+.button__icon--24px.icon--eye {
+  background-image: url('../static/images/icon_eye_24px.svg');
+}
+
+.button__icon--24px.icon--search {
+  background-image: url('../static/images/icon_search_24px.svg');
+}
+
+/* file icons */
+.button__icon--24px.icon--file-add {
+  background-image: url('../static/images/icon_file_add_24px.svg');
+}
+
+.button__icon--24px.icon--file-code {
+  background-image: url('../static/images/icon_file_code_24px.svg');
+}
+
+.button__icon--24px.icon--file-data {
+  background-image: url('../static/images/icon_file_data_24px.svg');
+}
+
+.button__icon--24px.icon--file-image {
+  background-image: url('../static/images/icon_file_image_24px.svg');
+}
+.button__icon--24px.icon--file-link {
+  background-image: url('../static/images/icon_file_link_24px.svg');
+}
+
+.button__icon--24px.icon--file-media {
+  background-image: url('../static/images/icon_file_media_24px.svg');
+}
+
+.button__icon--24px.icon--file-text {
+  background-image: url('../static/images/icon_file_text_24px.svg');
+}
+
+.button__icon--24px.icon--file-reload {
+  background-image: url('../static/images/icon_file_reload_24px.svg');
+}
+
+.button__icon--40px {
+  background-color: transparent; /* make the button transparent */
+  background-repeat: no-repeat;  /* make the background image appear only once */
+  background-position: 0 0;  /* equivalent to 'top left' */
+  border: none;           /* assuming we don't want any borders */
+  cursor: pointer;        /* make the cursor like hovering over an <a> element */
+  height: 40px;           /* make this the size of your image */
+  width: 40px;
+  vertical-align: middle; /* align the text vertically centered */
+  opacity: 0.3;
+  transition: opacity .2s;
+}
+
+.button__icon--40px:hover {
+  opacity: 1.0;
+  transition: opacity .2s;
+}
+
+.button__icon--40px.icon--add {
+  background-image: url('../static/images/icon_add_round_40px.svg');
+}
+
+.button__icon--40px.icon--data {
+  background-image: url('../static/images/icon_file_data_round_40px.svg');
+}
+
+.button__icon--40px.icon--image {
+  background-image: url('../static/images/icon_file_image_round_40px.svg');
+}
+
+.button__icon--40px.icon--link {
+  background-image: url('../static/images/icon_file_link_round_40px.svg');
+}
+
+.button__icon--40px.icon--media {
+  background-image: url('../static/images/icon_file_media_round_40px.svg');
+}
+
+.button__icon--40px.icon--code {
+  background-image: url('../static/images/icon_file_code_round_40px.svg');
+}
+
+.button__icon--40px.icon--text {
+  background-image: url('../static/images/icon_file_text_round_40px.svg');
+}
+
+.button__paper {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  text-align: center;
+  background-color: var(--color_accent);
+  box-shadow: var(--shadow_active);
+}
+
+.button__paper.icon--add {
+  font-size: 16px;
+  color: white;
+}
+
+.button__paper:active {
+  box-shadow: var(--shadow_inactive);
+}
+
+.button--flat {
+  color: var(--color_accent);
+  font-size: 13px;
+  text-transform:  uppercase;
+  padding-top: var(--min-grid);
+  padding-bottom: var(--min-grid);
+  padding-left: var(--minor-grid);
+  padding-right: var(--minor-grid);
+  corner-radius: 4px;
+  letter-spacing: .25px;
+  cursor: pointer;
+}
+
+.button--flat:hover {
+    background-color: var(--color_grey_100);
+    text-decoration: none;
+}
+
+/*------------------------------------*\
+            #Status Icons
+\*------------------------------------*/
+
+.status__icon--16px {
+  background-color: transparent; /* make the button transparent */
+  background-repeat: no-repeat;  /* make the background image appear only once */
+  border: none;           /* assuming we don't want any borders */
+  height: 16px;           /* make this the size of your image */
+  width: 16px;
+  vertical-align: middle; /* align the text vertically centered */
+  opacity: 1;
+  margin: auto;
+}
+
+.status__icon--16px.icon--comment {
+  background-image: url('../static/images/icon_comment_round_16px.svg');
+}
+
+.status__icon--16px.icon--complete {
+  background-image: url('../static/images/icon_complete_round_16px.svg');
+}
+
+.status__icon--16px.icon--error {
+  background-image: url('../static/images/icon_error_round_16px.svg');
+}
+
+.status__icon--16px.icon--none {
+  background-image: url('../static/images/icon_none_round_16px.svg');
+}
+
+.status__icon--16px.icon--pencil {
+  background-image: url('../static/images/icon_pencil_round_16px.svg');
+}
+
+.status__icon--16px.icon--warning {
+  background-image: url('../static/images/icon_warning_round_16px.svg');
+}
+
+.status__icon--16px.icon--eye {
+  background-image: url('../static/images/icon_eye_round_grey_16px.svg');
+}
+
+.status__icon--16px.icon--dispatch {
+  background-image: url('../static/images/icon_dispatch_round_grey_16px.svg');
+}
+
+.status__icon--24px {
+  background-color: transparent; /* make the button transparent */
+  background-repeat: no-repeat;  /* make the background image appear only once */
+  border: none;           /* assuming we don't want any borders */
+  height: 24px;           /* make this the size of your image */
+  width: 24px;
+  vertical-align: middle; /* align the text vertically centered */
+  opacity: 1;
+  margin: auto;
+}
+
+.status__icon--24px.icon--comment {
+  background-image: url('../static/images/icon_comment_round_24px.svg');
+}
+
+.status__icon--24px.icon--complete {
+  background-image: url('../static/images/icon_complete_round_24px.svg');
+}
+
+.status__icon--24px.icon--error {
+  background-image: url('../static/images/icon_error_round_24px.svg');
+}
+
+.status__icon--24px.icon--none {
+  background-image: url('../static/images/icon_none_round_24px.svg');
+}
+
+.status__icon--24px.icon--pencil {
+  background-image: url('../static/images/icon_pencil_round_24px.svg');
+}
+
+.status__icon--24px.icon--warning {
+  background-image: url('../static/images/icon_warning_round_24px.svg');
+}
+
+.status__icon--24px.icon--eye {
+  background-image: url('../static/images/icon_eye_round_grey_24px.svg');
+}
+
+.status__icon--24px.icon--dispatch {
+  background-image: url('../static/images/icon_dispatch_round_grey_24px.svg');
+}
+
+.status__icon--32px {
+  background-color: transparent; /* make the button transparent */
+  background-repeat: no-repeat;  /* make the background image appear only once */
+  border: none;           /* assuming we don't want any borders */
+  height: 32px;           /* make this the size of your image */
+  width: 32px;
+  vertical-align: middle; /* align the text vertically centered */
+  opacity: 1;
+  margin: auto;
+}
+
+.status__icon--32px.icon--comment {
+  background-image: url('../static/images/icon_comment_round_32px.svg');
+}
+
+.status__icon--32px.icon--none {
+  background-image: url('../static/images/icon_none_round_32px.svg');
+}
+
+.status__icon--32px.icon--pencil {
+  background-image: url('../static/images/icon_pencil_round_32px.svg');
+}
+
+.status__icon--32px.icon--eye {
+  background-image: url('../static/images/icon_eye_round_grey_32px.svg');
+}
