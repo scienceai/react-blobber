@@ -76,7 +76,7 @@ class Main extends React.Component {
     });
 
     let blobbers = this.state.rectGroups.map((rectGroup, i)=> {
-      console.log(i)
+      console.log(i);
       return(
         <Blobber key={'blobber_' + i} rects={rectGroup} cornerRadius={16} pathOffset={4}/>
       );
