@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Blobber from './src/Blobber';
 
+import './dev-styles.css';
+
 class Main extends React.Component {
 
   constructor(props) {
@@ -88,7 +90,7 @@ class Main extends React.Component {
           key={'blobber_' + i}
           rects={rectGroup}
           cornerRadius={16}
-          pathOffset={4}
+          pathOffset={20}
           svgStyle={{ fill: blobColors[i], stroke: blobColors[i] }} />
       );
     });
