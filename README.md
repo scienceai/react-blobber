@@ -1,5 +1,4 @@
-# react boilerplate
-standard react framework with router and hot loader based on the framework developed by Chris Callahan.
+# blobber
 
 # development
 ## first run
