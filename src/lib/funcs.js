@@ -41,9 +41,9 @@ export function orthoConvexHull(rects, offset) {
         }
       }
       if (isIsland === true) islands.push(i);
-      console.log('isLand?', i, isIsland);
+      //console.log('isLand?', i, isIsland);
   }
-  console.log('islands', islands);
+  //console.log('islands', islands);
   // find nearest neighbor
 
   let nearestRect;
@@ -55,12 +55,12 @@ export function orthoConvexHull(rects, offset) {
     let yMin = 100000;
     let deltaMin = 100000;
     for (let j = 0; j < rects.length; j++ ) {
-      console.log(i,j);
+      //console.log(i,j);
 
       if (islands[i] != j) {
 
         let xDelta = (rects[islands[i]].x1 - rects[j].x2 );
-        console.log('delta for ',i , rects[islands[i]].x1, '-', rects[j].x2 );
+        //console.log('delta for ',i , rects[islands[i]].x1, '-', rects[j].x2 );
 
         let yDelta = (rects[islands[i]].y2 - rects[j].y1);
         let delta = Math.sqrt(Math.abs(xDelta * xDelta) + Math.abs(yDelta * yDelta));
@@ -110,19 +110,19 @@ export function orthoConvexHull(rects, offset) {
       }
     }
     if (nearestRect !== false) {
-      console.log('island neighbors: ', islands[i], nearestRect );
+      //console.log('island neighbors: ', islands[i], nearestRect );
       //rectConnects.push({x1:rects[islands[i]].x1, y1:rects[islands[i]].y1, x2:rects[islands[i]].x1+10, y2:rects[islands[i]].y1+10});
       //rectConnects.push({x1:rects[nearestRect].x1, y1:rects[nearestRect].y1, x2:rects[nearestRect].x1+offset, y2:rects[nearestRect].y1+offset});
       let cX1, cX2, cY1, cY2;
       if (xMin > 0) {
-        console.log('island on right');
+        //console.log('island on right');
         // island is to the right of neighbor
         cX1 = rects[nearestRect].x2 - connectorThickness;
         cX2 = rects[islands[i]].x1 + connectorThickness;
         //rectConnects.push({x1:rects[nearestRect].x2, y1:rects[nearestRect].y1, x2:rects[islands[i]].x1+offset, y2:rects[nearestRect].y1+offset});
       } else {
         //island is to the left
-          console.log('island on left');
+        //console.log('island on left');
         cX1 = rects[islands[i]].x2 - connectorThickness;
         cX2 = rects[nearestRect].x1 + connectorThickness;
         //rectConnects.push({ x1:rects[islands[i]].x2, y1:rects[islands[i]].y1, x2:rects[nearestRect].x1 + offset, y2:rects[islands[i]].y1 + offset,});
@@ -139,7 +139,7 @@ export function orthoConvexHull(rects, offset) {
           cY1 = rects[islands[i]].y2 + ((rects[nearestRect].y1 -rects[islands[i]].y2)/2);
           cY2 = cY1 + connectorThickness;
       }
-      console.log('connector ', cX1, cY1, cX2, cY2);
+      //console.log('connector ', cX1, cY1, cX2, cY2);
       rectConnects.push({x1:cX1, y1:cY1, x2:cX2, y2:cY2});
 
     }
@@ -580,7 +580,7 @@ export function roundedSVGPath(points, r) {
       }
       if (deltaY2 > 0) {
         // left, then down
-          //console.log('- then curve down ', radius);
+        //console.log('- then curve down ', radius);
         svgPath += ' s ' + negRadius + ' 0 ' + negRadius + ' '+  radius;
       }
     } else if (deltaX > 0) {
