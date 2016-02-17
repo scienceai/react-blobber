@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "node dev-server.js",
     "build": "rm -rf dist && babel src --out-dir dist",
+    "prepublish": "npm run build",
     "test": "node_modules/.bin/mocha --compilers js:babel-core/register"
   },
   "repository": {
