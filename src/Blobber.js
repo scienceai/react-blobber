@@ -1,8 +1,6 @@
 import React from 'react';
 import { rect2rectPoints, orthoConvexHull, roundedSVGPath } from './lib/funcs';
 
-import './Blobber.css';
-
 const Blobber = ({ rects, pathOffset, cornerRadius, containerStyle, svgStyle }) => {
   const rectsAsPoints = rects.map(rect => rect2rectPoints(rect));
   const hull = orthoConvexHull(rectsAsPoints, pathOffset);
@@ -21,7 +19,7 @@ const Blobber = ({ rects, pathOffset, cornerRadius, containerStyle, svgStyle }) 
 
   return(
     <div
-      className='svgContainer'
+      className='blobber'
       style={containerStyle || { position:'absolute', left:'0px', top:'0px', width:'100%', height:'100%' }}
     >
       <svg width='100%' height='100%'>
