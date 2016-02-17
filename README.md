@@ -1,5 +1,9 @@
 # react-blobber
 
+<p align="center">
+  <img src="example.png" width="400px"/>
+</p>
+
 ### Development
 
 Run `npm run dev` to start the webpack dev server with hot reloading. Then go to [http://localhost:3000](http://localhost:3000).
