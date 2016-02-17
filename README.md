@@ -1,16 +1,23 @@
-# blobber
+# react-blobber
 
-# development
-## first run
-1. add [config vars](https://github.com/standard-analytics/config#config) to your environment
-4. `git clone https://github.com/standard-analytics/react-boilerplate`
-5. `cd dispatcher`
-6. `npm install`
-9. `npm run dev`
-10. `open localhost:8080`
+### Development
 
-## subsequent runs
-2. `git pull --rebase origin master`
-3. `npm install`
-6. `npm run dev`
-7. `open localhost:8080`
+Run `npm run dev` to start the webpack dev server with hot reloading. Then go to [http://localhost:3000](http://localhost:3000).
+
+### Build
+
+```
+npm run build
+```
+
+Outputs to `dist/`.
+
+### Test
+
+```
+npm test
+```
+
+### License
+
+[Apache 2.0](https://github.com/scienceai/blobber/blob/master/LICENSE)
