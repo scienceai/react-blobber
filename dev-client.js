@@ -1,7 +1,8 @@
-import React, { Component, PropTypes } from 'react';
-import Blobber from './blobber';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import Blobber from './src/Blobber';
 
-export default class Main extends Component {
+class Main extends React.Component {
 
   constructor(props) {
     super(props);
@@ -43,7 +44,7 @@ export default class Main extends Component {
 
   handleMouseMove(e){
     console.log('drag: ', this.state.dragging);
-    if (this.state.dragGroup == -1 || this.state.dragging == -1) return
+    if (this.state.dragGroup == -1 || this.state.dragging == -1) return;
     var newRects = this.state.rectGroups.slice();
     newRects[this.state.dragGroup][this.state.dragging].x = e.pageX-30;
     newRects[this.state.dragGroup][this.state.dragging].y = e.pageY-10;
@@ -93,6 +94,4 @@ export default class Main extends Component {
 }
 
 
-Main.propTypes = {
-
-};
+ReactDOM.render(<Main />, document.getElementById('root'));

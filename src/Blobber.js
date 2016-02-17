@@ -1,8 +1,8 @@
-import React, { Component, PropTypes } from 'react';
-// import classnames from 'classnames';
+import React from 'react';
 
+import './Blobber.css';
 
-export default class Blobber extends Component {
+export default class Blobber extends React.Component {
 
   constructor(props) {
         super(props);

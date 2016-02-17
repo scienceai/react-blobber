@@ -1,7 +1,13 @@
+import React from 'react';
+import { shallow } from 'enzyme';
 import assert from 'assert';
+import Blobber from '../src/Blobber';
 
-describe('Dispatcher', () => {
-  it('the truth', () => {
-    assert.equal(2 + 2, 4);
+describe('Blobber', () => {
+
+  it('renders the <Blobber /> component', () => {
+    const wrapper = shallow(<Blobber />);
+    assert(wrapper.find('svg'));
   });
+
 });
