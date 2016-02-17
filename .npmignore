@@ -3,3 +3,8 @@ test/
 .gitignore
 .eslintrc
 .babelrc
+webpack.dev.config.js
+dev-client.js
+dev-server.js
+dev-styles.css
+index.html
