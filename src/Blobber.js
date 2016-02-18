@@ -1,5 +1,7 @@
 import React from 'react';
-import { rect2rectPoints, orthoConvexHull, roundedSVGPath } from './lib/funcs';
+import rect2rectPoints from './lib/rect2rectPoints';
+import orthoConvexHull from './lib/orthoConvexHull';
+import roundedSVGPath from './lib/roundedSVGPath';
 
 const Blobber = ({ rects, pathOffset, cornerRadius, containerStyle, svgStyle }) => {
   const rectsAsPoints = rects.map(rect => rect2rectPoints(rect));

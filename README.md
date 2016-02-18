@@ -1,5 +1,7 @@
 # react-blobber
 
+Create orthogonal blobs from arrays of rectangles
+
 <p align="center">
   <img src="example.png" width="400px"/>
 </p>

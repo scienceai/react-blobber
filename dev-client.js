@@ -14,12 +14,12 @@ class Main extends React.Component {
       //rects: [{x1:30, y1:80, x2:180, y2:120},{x1:60, y1:60, x2:155, y2:100}, {x1:115, y1:15, x2:275, y2:50}]
       rectGroups: [
         [{x:30, y:250, width:100, height: 24},
-        {x:100, y:285, width:100, height: 24},
-        {x:200, y:355, width:100, height: 24}],
+        {x:100, y:275, width:100, height: 24},
+        {x:200, y:365, width:100, height: 24}],
 
         [{x:50, y:320, width:100, height: 24},
         {x:250, y:320, width:100, height: 24},
-        {x:250, y:250, width:100, height: 24}]
+        {x:230, y:280, width:100, height: 24}]
       ]
     };
   }
@@ -90,7 +90,7 @@ class Main extends React.Component {
           key={'blobber_' + i}
           rects={rectGroup}
           cornerRadius={16}
-          pathOffset={20}
+          pathOffset={8}
           svgStyle={{ fill: blobColors[i], stroke: blobColors[i] }} />
       );
     });
