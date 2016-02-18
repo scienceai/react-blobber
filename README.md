@@ -48,19 +48,20 @@ const groupRectangles = [
 
 class Example extends React.Component {
 
-  const exampleBlobs = groupRectangles.map((rectGroup, i) => (
-    <Blobber
-      key={i}
-      rects={rectGroup}
-      pathOffset={5}
-      cornerRadius={10}
-      containerStyle={{ width: '100%', height: '100%' }}
-      svgStyle={{ fill: groupColors[i], stroke: groupColors[i], opacity: 0.5 }}
-      algorithm='convex-hull'
-    />
-  ));
-
   render() {
+
+    const exampleBlobs = groupRectangles.map((rectGroup, i) => (
+      <Blobber
+        key={i}
+        rects={rectGroup}
+        pathOffset={5}
+        cornerRadius={10}
+        containerStyle={{ width: '100%', height: '100%' }}
+        svgStyle={{ fill: groupColors[i], stroke: groupColors[i], opacity: 0.5 }}
+        algorithm='convex-hull'
+      />
+    ));
+
     return (
       <div>
         {exampleBlobs}
@@ -70,9 +71,9 @@ class Example extends React.Component {
 }
 ```
 
-###### `props`
+##### Props
 
-+ `rects`: an array of rectangles within a blob group (elements of example `groupRectangles` above)
++ `rects`: an array of rectangles for one blob group (example: elements of `groupRectangles` above). A rectangle object consists of `x` and `y` top-left coordinates as well as `width` and `height`.
 
 + `pathOffset`: blob padding, in pixels
 
@@ -82,7 +83,7 @@ class Example extends React.Component {
 
 + `svgStyle`: style object for svg paths
 
-+ `algorithm`: `convex-hull` or `polygon-union`. There are minor differences in appearance between the two algorithms. However, only `convex-hull` currently supports automatic connections between rectanges spaced far apart. `polygon-union` should be able to support this soon.
++ `algorithm`: options are `convex-hull` or `polygon-union`. There are minor differences in appearance between the two algorithms. `convex-hull` may not produce optimal results for very complex layouts or groupings, due to convexity requirements. However, currently only `convex-hull` supports automatic extended connections between rectangles spaced far apart. `polygon-union` should soon be able to support this as well.
 
 ### Development
 
