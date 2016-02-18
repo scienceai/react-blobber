@@ -1,5 +1,5 @@
 {
-  "name": "@scienceai/react-blobber",
+  "name": "react-blobber",
   "version": "0.1.0",
   "description": "React component for creating blobs around elements",
   "main": "dist/Blobber.js",
