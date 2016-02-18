@@ -9,17 +9,23 @@ class Main extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      algorithm: 'convex-hull',
+
       dragGroup: -1,
       dragging: -1,
       //rects: [{x1:30, y1:80, x2:180, y2:120},{x1:60, y1:60, x2:155, y2:100}, {x1:115, y1:15, x2:275, y2:50}]
       rectGroups: [
-        [{x:30, y:250, width:100, height: 24},
-        {x:100, y:275, width:100, height: 24},
-        {x:200, y:365, width:100, height: 24}],
+        [{x:30, y:250, width:150, height: 24},
+        {x:100, y:285, width:150, height: 24},
+        {x:200, y:310, width:150, height: 24}],
 
-        [{x:50, y:320, width:100, height: 24},
-        {x:250, y:320, width:100, height: 24},
-        {x:230, y:280, width:100, height: 24}]
+        [{x:180, y:270, width:150, height: 24},
+        {x:250, y:260, width:150, height: 24},
+        {x:160, y:240, width:150, height: 24}],
+
+        [{x:50, y:220, width:150, height: 24},
+        {x:200, y:190, width:150, height: 24},
+        {x:250, y:170, width:150, height: 24}]
       ]
     };
   }
@@ -61,8 +67,9 @@ class Main extends React.Component {
   render() {
 
     const labels = [
-      ['Apple', 'Google', 'Facebook'],
-      ['Cat', 'Dog', 'Sthenurine'],
+      ['Mercury', 'Venus', 'Mars'],
+      ['quarks', 'leptons', 'bosons'],
+      ['heart', 'lungs', 'brain'],
     ];
 
     const rectDivs = this.state.rectGroups.map((rectGroup, i) => {
@@ -83,7 +90,7 @@ class Main extends React.Component {
       return cells;
     });
 
-    const blobColors = ['#26A65B', '#F89406'];
+    const blobColors = ['#D24D57', '#F5D76E', '#C5EFF7'];
     const blobbers = this.state.rectGroups.map((rectGroup, i)=> {
       return(
         <Blobber
@@ -91,16 +98,23 @@ class Main extends React.Component {
           rects={rectGroup}
           cornerRadius={16}
           pathOffset={8}
-          svgStyle={{ fill: blobColors[i], stroke: blobColors[i] }} />
+          svgStyle={{ fill: blobColors[i], stroke: blobColors[i] }}
+          algorithm={this.state.algorithm} />
       );
     });
 
     return(
-      <div className='blobberDemo' style={{width:'1000px', height:'1000px', position:'relative'}}>
+      <div>
+        <div className='blobberDemo' style={{width:'1000px', height:'1000px', position:'relative'}}>
 
-        {blobbers}
-        {rectDivs}
+          {blobbers}
+          {rectDivs}
 
+        </div>
+        <select name='algorithm' onChange={(e) => this.setState({ algorithm: e.target.value })} defaultValue='convex-hull'>
+          <option value='convex-hull'>algorithm: convex hull</option>
+          <option value='polygon-union'>algorithm: polygon union</option>
+        </select>
       </div>
     );
   }
