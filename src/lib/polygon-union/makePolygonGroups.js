@@ -71,13 +71,34 @@ function joinPolygons(polygonsArr, minBridgeThickness, style){
       bridgeX1 = bridgeX1 < rectX1 ? rectX1 : bridgeX1;
       bridgeX2 = bridgeX2 > rectX2 ? rectX2 : bridgeX2;
 
-    // bridgeRect =  [bridgeData.pointA, /* x1 y1 */
-    //               [bridgeData.pointB[0], bridgeData.pointA[1]], /* x2 y1 */
-    //                bridgeData.pointB, /* x2 y2 */
-    //               [bridgeData.pointA[0], bridgeData.pointB[1]]]; /* x1 y2 */
       bridgeRect =  [[bridgeX1, rectY1], [bridgeX2, rectY1], [bridgeX2, rectY2], [bridgeX1, rectY2]];
       //console.log('bridgeRect ', bridgeRect);
       polygonsArr = polygonBoolean(polygonsArr, bridgeRect, 'or');
+
+    } else {
+      // lineDirection == 'v' - find the overlapping Y pixels
+      let rectY1 = bridgeData.lineA[0][1] > bridgeData.lineB[0][1] ? bridgeData.lineA[0][1] : bridgeData.lineB[0][1];
+      let rectY2 = bridgeData.lineA[1][1] < bridgeData.lineB[1][1] ? bridgeData.lineA[1][1] : bridgeData.lineB[1][1];
+      let rectX1 = bridgeData.lineA[0][0];
+      let rectX2 = bridgeData.lineB[0][0];
+
+      let deltaX = Math.abs(rectX2 - rectX1);
+      let deltaY = Math.abs(rectY2 - rectY1);
+      let thickness = minBridgeThickness;
+
+      if(style == 'elastic'){
+        thickness = deltaY * ((1/(deltaX*deltaX))*200);
+        if(thickness < minBridgeThickness) thickness = minBridgeThickness;
+      }
+      let bridgeY1 = ((rectY2 - rectY1)/2) - (thickness/2) + rectY1;
+      let bridgeY2 = ((rectY2 - rectY1)/2) + (thickness/2) + rectY1;
+      bridgeY1 = bridgeY1 < rectY1 ? rectY1 : bridgeY1;
+      bridgeY2 = bridgeY2 > rectY2 ? rectY2 : bridgeY2;
+
+      bridgeRect =  [[rectX1, bridgeY1], [rectX2, bridgeY1], [rectX2, bridgeY2], [rectX1, bridgeY2]];
+      console.log('bridgeRect ', bridgeRect);
+      polygonsArr = polygonBoolean(polygonsArr, bridgeRect, 'or');
+
     }
   }
 
@@ -127,15 +148,6 @@ function findNearestPoints(polygonA, polygonB) {
       closestPoint = thisClosestPoint;
       closestLine = thisClosestLine;
       closestPointIndex = thisclosestPointIndex;
-      // reorder line
-      // if(thisClosestLine[0][0] > thisClosestLine[1][0]){
-      //   closestLine = [thisClosestLine[1], thisClosestLine[0]]
-      // } else if(thisClosestLine[0][1] > thisClosestLine[1][1]){
-      //   closestLine = [thisClosestLine[1], thisClosestLine[0]]
-      // }
-
-      //console.log('closestPoint: ', closestPoint);
-      //console.log('closestLine: ', closestLine);
     }
 
     // polygonB.forEach(pointB =>{
@@ -172,15 +184,18 @@ function findNearestPoints(polygonA, polygonB) {
     if(closestPoint[1] >= closestLine[0][1] && closestPoint[1] <= closestLine[1][1]){
       overlap = true;
     }
-    if ((closestPointIndex-1 >= 0) && (polygonA[closestPointIndex-1][0] != closestPoint[0])){
+
+    let prevPointIndex = closestPointIndex-1;
+    let nextPointIndex = closestPointIndex+1;
+
+    if (prevPointIndex < 0) prevPointIndex = polygonA.length - 1;
+    if (nextPointIndex > polygonA.length-1) nextPointIndex = 0;
+    if (polygonA[prevPointIndex][0] == closestPoint[0]){
       // prev point on PolygonA is vertically offset
-      lineA = [polygonA[closestPointIndex-1], polygonA[closestPointIndex]];
-    } else if ((closestPointIndex+1 < polygonA.length) && (polygonA[closestPointIndex+1][0] != closestPoint[0])) {
-      //next point is vertically offset
-      lineA = [polygonA[closestPointIndex+1], polygonA[closestPointIndex]];
-    } else if ((closestPointIndex+1 >= polygonA.length) && (polygonA[0][0] != closestPoint[0])) {
-      //next point is horizontally offset
-      lineA = [polygonA[0], polygonA[closestPointIndex]];
+      lineA = [polygonA[prevPointIndex], polygonA[closestPointIndex]];
+    } else if (polygonA[nextPointIndex][0] == closestPoint[0]) {
+      // next point is vertically offset
+      lineA = [polygonA[nextPointIndex], polygonA[closestPointIndex]];
     }
     if(lineA[0][1] > lineA[1][1]){
       lineA = [lineA[1], lineA[0]]
@@ -198,13 +213,11 @@ function findNearestPoints(polygonA, polygonB) {
     } else {
       closestPointB = closestLine[1];
     }
-    // find if lines overlap x pixels
+    // find if lines overlap in X pixels
     if(closestPoint[0] >= closestLine[0][0] && closestPoint[0] <= closestLine[1][0]){
       overlap = true;
     }
     // find the parallel line on polygonA
-    //console.log('polygonA[closestPointIndex-1]: ', polygonA[closestPointIndex-1]);
-
     let prevPointIndex = closestPointIndex-1;
     let nextPointIndex = closestPointIndex+1;
 
