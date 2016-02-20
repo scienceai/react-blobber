@@ -46,7 +46,7 @@ function polygonPointArr(rect) {
 function joinPolygons(polygonsArr, minBridgeThickness, style){
   //console.log('joinPolygons start data ', JSON.stringify(polygonsArr));
   let bridgeData = findNearestPoints(polygonsArr[0], polygonsArr[1]);
-  //console.log('test findNearestPoints', bridgeData);
+  console.log('test findNearestPoints', bridgeData);
 
   let bridgeRect;
   if(bridgeData.overlap == true){
@@ -131,11 +131,25 @@ function findNearestPoints(polygonA, polygonB) {
       if (minDistance < prev) {
         thisClosestPoint = pointA;
         thisclosestPointIndex = indexA;
-        if (i < arr.length-1){
-          thisClosestLine = [arr[i], arr[i+1]];
-        } else {
-          thisClosestLine = [arr[i], arr[0]];
+
+        // TODO - check for best fit on closest line when points are alligned
+        // if points allign vertically the line should be horizontal
+
+        let thisNextPointI = i+1 < arr.length ? i+1 : 0;
+        let thisPrevPointI = i-1 >= 0 ? i-1 : arr.length-1;
+
+        thisClosestLine = [arr[i], arr[thisNextPointI]];
+
+        if((thisClosestPoint[0] == arr[i][0]) && (thisClosestPoint[0] == arr[thisNextPointI][0])){
+          // all x's are same- aligned on Y axis
+          thisClosestLine = [arr[i], arr[thisPrevPointI]];
+          console.log('swapping vertical line');
+        } else if ((thisClosestPoint[1] == arr[i][1]) && (thisClosestPoint[1] == arr[thisNextPointI][1])){
+          // all Y's are same- aligned on X axis
+          thisClosestLine = [arr[i], arr[thisNextPointI]];
+          console.log('swapping H line');
         }
+
         return minDistance;
       } else {
         return prev;
@@ -163,11 +177,23 @@ function findNearestPoints(polygonA, polygonB) {
 
   });
 
+
   //console.log('closestDelta: ', closestDelta);
   let lineDirection = 'h';
   let closestPointB = closestLine[0][0];
   let overlap = false;
   let lineA = [[0,0],[0,10]];
+
+  // find if points are alligned
+  if(closestPoint[0] == closestLine[0][0]){
+    // x coordinate is alligned
+    overlap = true;
+    console.log("x align");
+  } else if (closestPoint[1] == closestLine[0][1]){
+    // y coordinate is alligned
+    overlap = true;
+    console.log("y align");
+  }
 
   if(closestLine[0][0] == closestLine[1][0]){
     // Manage Vertical Lines
