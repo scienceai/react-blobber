@@ -140,16 +140,22 @@ function findNearestPoints(polygonA, polygonB) {
 
         thisClosestLine = [arr[i], arr[thisNextPointI]];
 
+        console.log('compare: ', thisClosestPoint[1], arr[i][1], arr[thisNextPointI][1]);
         if((thisClosestPoint[0] == arr[i][0]) && (thisClosestPoint[0] == arr[thisNextPointI][0])){
           // all x's are same- aligned on Y axis
           thisClosestLine = [arr[i], arr[thisPrevPointI]];
           console.log('swapping vertical line');
         } else if ((thisClosestPoint[1] == arr[i][1]) && (thisClosestPoint[1] == arr[thisNextPointI][1])){
           // all Y's are same- aligned on X axis
-          thisClosestLine = [arr[i], arr[thisNextPointI]];
+          thisClosestLine = [arr[i], arr[thisPrevPointI]];
           console.log('swapping H line');
         }
 
+        // if (i < arr.length-1){
+        //   thisClosestLine = [arr[i], arr[i+1]];
+        // } else {
+        //   thisClosestLine = [arr[i], arr[0]];
+        // }
         return minDistance;
       } else {
         return prev;
