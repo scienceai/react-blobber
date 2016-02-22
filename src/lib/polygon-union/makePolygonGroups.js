@@ -46,8 +46,12 @@ function polygonPointArr(rect) {
 function joinPolygons(polygonsArr, minBridgeThickness, style){
   //console.log('joinPolygons start data ', JSON.stringify(polygonsArr));
 
+  // join the polygons until there is only 1 polygon
+  let limit = 0;
+  while(polygonsArr.length > 1 && limit < 10){
+  limit++;
   let bridgeData = findNearestPoints(polygonsArr[0], polygonsArr[1]);
-  console.log('test findNearestPoints', bridgeData);
+  console.log('join', polygonsArr);
 
   let bridgeRect;
   if(bridgeData.overlap == true){
@@ -149,6 +153,7 @@ function joinPolygons(polygonsArr, minBridgeThickness, style){
   // console.log('bridgePoints result data', bridgeRect);
 
   //console.log('joinPolygons result data', JSON.stringify(polygonsArr));
+}
   return(polygonsArr);
 }
 
