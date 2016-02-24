@@ -24,8 +24,8 @@ class Main extends React.Component {
         {x:160, y:240, width:150, height: 24}],*/
 
         [{x:50, y:220, width:150, height: 24},
-        {x:200, y:190, width:150, height: 24},
-        {x:250, y:170, width:150, height: 24}]
+        {x:200, y:190, width:150, height: 24}
+        /*{x:250, y:170, width:150, height: 24}*/]
       ]
     };
   }

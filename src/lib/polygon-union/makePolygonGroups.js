@@ -48,7 +48,7 @@ function joinPolygons(polygonsArr, minBridgeThickness, style){
 
   // join the polygons until there is only 1 polygon
   let limit = 0;
-  while(polygonsArr.length > 1 && limit < 10){
+  while(polygonsArr.length > 1 && limit < 2){
   limit++;
   let bridgeData = findNearestPoints(polygonsArr[0], polygonsArr[1]);
   console.log('join', polygonsArr);
@@ -56,7 +56,8 @@ function joinPolygons(polygonsArr, minBridgeThickness, style){
   let bridgeRect;
   if(bridgeData.overlap == true){
     if (bridgeData.lineDirection == 'h'){
-      // find the overlapping x pixels
+      console.log('bridge h');
+      // find the overlapping x pixels - make a vertical bridge
       let rectX1 = bridgeData.lineA[0][0] > bridgeData.lineB[0][0] ? bridgeData.lineA[0][0] : bridgeData.lineB[0][0];
       let rectX2 = bridgeData.lineA[1][0] < bridgeData.lineB[1][0] ? bridgeData.lineA[1][0] : bridgeData.lineB[1][0];
       let rectY1 = bridgeData.lineA[0][1];
@@ -67,8 +68,9 @@ function joinPolygons(polygonsArr, minBridgeThickness, style){
       let thickness = minBridgeThickness;
 
       if(style == 'elastic'){
-        thickness = deltaX * ((1/(deltaY*deltaY))*200);
-        if(thickness < minBridgeThickness) thickness = minBridgeThickness;
+        thickness = deltaX * ((1/(deltaY*deltaY))*deltaX);
+        thickness = thickness > minBridgeThickness ? thickness : minBridgeThickness;
+        thickness = thickness > deltaX ? deltaX : thickness;
       }
       let bridgeX1 = ((rectX2 - rectX1)/2) - (thickness/2) + rectX1;
       let bridgeX2 = ((rectX2 - rectX1)/2) + (thickness/2) + rectX1;
@@ -81,24 +83,33 @@ function joinPolygons(polygonsArr, minBridgeThickness, style){
       polygonsArr = polygonBoolean(polygonsArr, bridgeRect, 'or');
 
     } else {
-      // lineDirection == 'v' - find the overlapping Y pixels
+      // lineDirection == 'v' - build horizontal bridge
+      console.log('bridge v');
+      // - find the overlapping Y pixels
+      let rectX1 = bridgeData.lineA[0][0];
       let rectY1 = bridgeData.lineA[0][1] > bridgeData.lineB[0][1] ? bridgeData.lineA[0][1] : bridgeData.lineB[0][1];
       let rectY2 = bridgeData.lineA[1][1] < bridgeData.lineB[1][1] ? bridgeData.lineA[1][1] : bridgeData.lineB[1][1];
-      let rectX1 = bridgeData.lineA[0][0];
-      let rectX2 = bridgeData.lineB[0][0];
+
 
       let deltaX = Math.abs(rectX2 - rectX1);
       let deltaY = Math.abs(rectY2 - rectY1);
       let thickness = minBridgeThickness;
 
       if(style == 'elastic'){
-        thickness = deltaY * ((1/(deltaX*deltaX))*200);
-        if(thickness < minBridgeThickness) thickness = minBridgeThickness;
+        thickness = deltaY * ((1/(deltaX*deltaX))*deltaY);
+        console.log(thickness);
+        thickness = thickness > minBridgeThickness ? thickness : minBridgeThickness;
+        thickness = thickness > deltaY ? deltaY : thickness;
       }
       let bridgeY1 = ((rectY2 - rectY1)/2) - (thickness/2) + rectY1;
       let bridgeY2 = ((rectY2 - rectY1)/2) + (thickness/2) + rectY1;
-      bridgeY1 = bridgeY1 < rectY1 ? rectY1 : bridgeY1;
-      bridgeY2 = bridgeY2 > rectY2 ? rectY2 : bridgeY2;
+      // if(bridgeY1 < rectY1){
+      //   bridgeY1 = rectY1;
+      //   bridgeY2 = rectY1 + minBridgeThickness;
+      //   console.log('x');
+      // }
+      // bridgeY1 = bridgeY1 < rectY1 ? rectY1 : bridgeY1;
+      // bridgeY2 = bridgeY2 > rectY2 ? rectY2 : bridgeY2;
 
       bridgeRect =  [[rectX1, bridgeY1], [rectX2, bridgeY1], [rectX2, bridgeY2], [rectX1, bridgeY2]];
       console.log('bridgeRect ', bridgeRect);
@@ -107,46 +118,63 @@ function joinPolygons(polygonsArr, minBridgeThickness, style){
     }
   } else {
     // points are orthoganol to each other
+    console.log('adjascent');
+    let startLine = bridgeData.lineA;
+    let endLine = bridgeData.lineB;
+    let startPoint = bridgeData.pointA;
+    let endPoint = bridgeData.pointB;
 
-    if(bridgeData.lineA[0][0] == bridgeData.lineA[1][0]){
-      //line A is vertical - build horizontal bridge segment
-      console.log('h then v');
-      let rectX1 = bridgeData.pointA[0];
-      let rectX2 = bridgeData.pointA[0] < bridgeData.pointB[0] ? bridgeData.pointB[0] + minBridgeThickness : bridgeData.pointB[0];
-      let rectY1 = bridgeData.pointA[1] == bridgeData.lineA[0][1] ? bridgeData.pointA[1] : bridgeData.lineA[1][1] - minBridgeThickness;
-      let rectY2 = (rectY1 + minBridgeThickness);
+    if(bridgeData.pointA[0] > bridgeData.pointB[0]){
+      startLine = bridgeData.lineB;
+      endLine = bridgeData.lineA;
+      startPoint = bridgeData.pointB;
+      endPoint = bridgeData.pointA;
+    }
+
+    if(startLine[0][0] == startLine[1][0]){
+      //start line is vertical - build horizontal bridge segment
+      console.log('- h then v');
+      let startX = startPoint[0] - minBridgeThickness;
+      let endX = endPoint[0]  + minBridgeThickness;
+
+      let startY = startPoint[1] - minBridgeThickness;
+      let endY = startPoint[1];
+      if(startPoint[1] == startLine[0][1] && startPoint[1] < startLine[1][1]){
+        startY = startPoint[1];
+        endY = startPoint[1] + minBridgeThickness;
+      }
+
+      let rectX1 = startX;
+      let rectX2 = endX;
+      let rectY1 = startY;
+      let rectY2 = endY;
 
       bridgeRect =  [[rectX1, rectY1], [rectX2, rectY1], [rectX2, rectY2], [rectX1, rectY2]];
       console.log('bridgeRect ', bridgeRect);
       polygonsArr = polygonBoolean(polygonsArr, bridgeRect, 'or');
 
-      // - build vertical segment
-      rectY1 = rectY1 > bridgeData.pointB[1] ? rectY1 + minBridgeThickness : rectY1;
-      rectY2 = bridgeData.pointB[1];
-      rectX1 = rectX2 + minBridgeThickness > bridgeData.pointB[0] ? rectX2 - minBridgeThickness : rectX2;
-      rectX2 = rectX1 + minBridgeThickness;
-      bridgeRect =  [[rectX1, rectY1], [rectX2, rectY1], [rectX2, rectY2], [rectX1, rectY2]];
-      polygonsArr = polygonBoolean(polygonsArr, bridgeRect, 'or');
 
     } else if(bridgeData.lineA[0][1] == bridgeData.lineA[1][1]){
-      // line A is Horizontal
-      // - build vertical bridge segment
-      let rectY1 = bridgeData.pointA[1];
-      let rectY2 = bridgeData.pointB[1];
-      let rectX1 = bridgeData.pointA[0];
-      let rectX2 = rectX1 + minBridgeThickness;
+      // line A is Horizontal - build vertical bridge segment
+      console.log('- v then h');
+
+      let startY = startPoint[1] + minBridgeThickness;
+      let endY = endPoint[1] - minBridgeThickness;
+
+      let startX = startPoint[0] - minBridgeThickness;
+      let endX = startPoint[0];
+      if(startPoint[0] == startLine[0][0] && startPoint[0] < startLine[1][0]){
+        startX = startPoint[0];
+        endX = startPoint[0] + minBridgeThickness;
+      }
+      let rectX1 = startX;
+      let rectX2 = endX;
+      let rectY1 = startY;
+      let rectY2 = endY;
+
       bridgeRect =  [[rectX1, rectY1], [rectX2, rectY1], [rectX2, rectY2], [rectX1, rectY2]];
+      console.log('bridgeRect ', bridgeRect);
       polygonsArr = polygonBoolean(polygonsArr, bridgeRect, 'or');
-
-      // - build horizontal segment
-
-      rectX1 = rectX2;
-      rectX2 = bridgeData.pointB[0];
-      rectY1 = rectY2;
-      rectY2 = rectY1 + minBridgeThickness;
-      bridgeRect =  [[rectX1, rectY1], [rectX2, rectY1], [rectX2, rectY2], [rectX1, rectY2]];
-      polygonsArr = polygonBoolean(polygonsArr, bridgeRect, 'or');
-
     }
   }
 
@@ -181,9 +209,6 @@ function findNearestPoints(polygonA, polygonB) {
         thisClosestPoint = pointA;
         thisClosestPointIndex = indexA;
 
-        // TODO - check for best fit on closest line when points are alligned
-        // if points allign vertically the line should be horizontal
-
         let thisNextPointI = i+1 < arr.length ? i+1 : 0;
         let thisPrevPointI = i-1 >= 0 ? i-1 : arr.length-1;
 
@@ -200,11 +225,6 @@ function findNearestPoints(polygonA, polygonB) {
           console.log('swapping H line');
         }
 
-        // if (i < arr.length-1){
-        //   thisClosestLine = [arr[i], arr[i+1]];
-        // } else {
-        //   thisClosestLine = [arr[i], arr[0]];
-        // }
         return minDistance;
       } else {
         return prev;
@@ -219,17 +239,6 @@ function findNearestPoints(polygonA, polygonB) {
       closestPointIndex = thisClosestPointIndex;
     }
 
-    // polygonB.forEach(pointB =>{
-    //   let xDelta = (pointA[0] - pointB[0]);
-    //   let yDelta = (pointA[0] - pointB[0]);
-    //   let delta = Math.sqrt(Math.abs(xDelta * xDelta) + Math.abs(yDelta * yDelta));
-    //   // let delta = pDistance()
-    //   if (delta < closestDelta) {
-    //     closestDelta = delta;
-    //     closestPoints = [pointA, pointB];
-    //   }
-    // });
-
   });
 
 
@@ -242,11 +251,11 @@ function findNearestPoints(polygonA, polygonB) {
   // find if points are alligned
   if(closestPoint[0] == closestLine[0][0]){
     // x coordinate is alligned
-    overlap = true;
+    //overlap = true;
     console.log("x align");
   } else if (closestPoint[1] == closestLine[0][1]){
     // y coordinate is alligned
-    overlap = true;
+    //overlap = true;
     console.log("y align");
   }
 
@@ -307,15 +316,14 @@ function findNearestPoints(polygonA, polygonB) {
     if (polygonA[prevPointIndex][1] == closestPoint[1]){
       // prev point on PolygonA is horizontally offset
       lineA = [polygonA[prevPointIndex], polygonA[closestPointIndex]];
-      // debugger;
     } else if (polygonA[nextPointIndex][1] == closestPoint[1]) {
       // next point is horizontally offset
       lineA = [polygonA[nextPointIndex], polygonA[closestPointIndex]];
-      // debugger;
     }
     if(lineA[0][0] > lineA[1][0]){
       lineA = [lineA[1], lineA[0]]
     }
+
   }
 
   return ({ delta: closestDelta,
