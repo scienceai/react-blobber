@@ -8,14 +8,14 @@ Create orthogonal blobs from grouped arrays of rectangles
 Example of convex-hull algorithm:
 
 <p align="center">
-  <img src="example1.png" width="300px"/>
+  <img src="example1.png" width="500px"/>
 </p>
 
 Examples of polygon-union algorithm:
 
 <p align="center">
-  <img src="example2.png" width="300px"/>
-  <img src="example3.png" width="300px"/>
+  <img src="example2.png" width="400px"/>
+  <img src="example3.png" width="400px"/>
 </p>
 
 ### Usage
