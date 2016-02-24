@@ -15,18 +15,17 @@ class Main extends React.Component {
       dragging: -1,
       //rects: [{x1:30, y1:80, x2:180, y2:120},{x1:60, y1:60, x2:155, y2:100}, {x1:115, y1:15, x2:275, y2:50}]
       rectGroups: [
-        [{x:160, y:240, width:150, height: 24},
-        {x:30, y:250, width:150, height: 24},
-        {x:100, y:285, width:150, height: 24},
-        {x:200, y:310, width:150, height: 24}],
+        [{x:142, y:154, width:150, height: 24},
+        {x:254, y:102, width:150, height: 24},
+        {x:306, y:294, width:150, height: 24}],
 
-        [{x:180, y:270, width:150, height: 24},
-        {x:250, y:260, width:150, height: 24},
-        {x:160, y:240, width:150, height: 24}],
+        [{x:219, y:245, width:150, height: 24},
+        {x:102, y:289, width:150, height: 24},
+        {x:102, y:209, width:150, height: 24}],
 
-        [{x:50, y:220, width:150, height: 24},
-        {x:200, y:190, width:150, height: 24},
-        {x:250, y:170, width:150, height: 24}]
+        [{x:310, y:190, width:150, height: 24},
+        {x:393, y:246, width:150, height: 24},
+        {x:392, y:130, width:150, height: 24}]
       ]
     };
   }
@@ -68,7 +67,7 @@ class Main extends React.Component {
   render() {
 
     const labels = [
-      ['Mercury', 'Venus', 'Mars', 'test'],
+      ['Mercury', 'Venus', 'Mars'],
       ['quarks', 'leptons', 'bosons'],
       ['heart', 'lungs', 'brain'],
     ];
@@ -91,13 +90,13 @@ class Main extends React.Component {
       return cells;
     });
 
-    const blobColors = ['#D24D57', '#F5D76E', '#C5EFF7'];
+    const blobColors = ['#D24D57', '#F5D76E', '#19B5FE'];
     const blobbers = this.state.rectGroups.map((rectGroup, i)=> {
       return(
         <Blobber
           key={'blobber_' + i}
           rects={rectGroup}
-          cornerRadius={16}
+          cornerRadius={15}
           pathOffset={8}
           svgStyle={{ fill: blobColors[i], stroke: blobColors[i] }}
           algorithm={this.state.algorithm} />
