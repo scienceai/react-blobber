@@ -69,8 +69,8 @@ function joinPolygons(polygonsArr, minBridgeThickness, style){
     }
 
     if(bridgeData.overlap == true){
-      if (bridgeData.lineDirection == 'h'){
-        //console.log('bridge h');
+      if (startLine[0][1] == startLine[1][1]){
+        //console.log('horizontal parallel lines - make vertical bridge')
         // find the overlapping x pixels - make a vertical bridge
         let rectX1 = startLine[0][0] > endLine[0][0] ? startLine[0][0] : endLine[0][0];
         let rectX2 = startLine[1][0] < endLine[1][0] ? startLine[1][0] : endLine[1][0];
@@ -99,7 +99,7 @@ function joinPolygons(polygonsArr, minBridgeThickness, style){
 
       } else {
         // lineDirection == 'v' - build horizontal bridge
-        //console.log('bridge v');
+        //console.log('vertical parallel lines - make horizontal bridge');
         // - find the overlapping Y pixels
         let rectX1 = startLine[0][0];
         let rectX2 = endLine[0][0];
@@ -132,13 +132,16 @@ function joinPolygons(polygonsArr, minBridgeThickness, style){
         //start line is vertical - build horizontal bridge segment
         //console.log('- h then v');
         let startX = startPoint[0];
-        let endX = endPoint[0];
-        let startY = startPoint[1] - minBridgeThickness;
-        let endY = startPoint[1];
-        if(startPoint[1] == startLine[0][1] && startPoint[1] < startLine[1][1]){
-          startY = startPoint[1];
-          endY = startPoint[1] + minBridgeThickness;
-        }
+        let endX = endPoint[0] + minBridgeThickness;
+        //let startY = startPoint[1] - minBridgeThickness;
+        //let endY = startPoint[1];
+        // if(startPoint[1] == startLine[0][1] && startPoint[1] < startLine[1][1]){
+        //   startY = startPoint[1];
+        //   endY = startPoint[1] + minBridgeThickness;
+        // }
+
+        let startY = startPoint[1] < startLine[1][1] ? startPoint[1] : startPoint[1] - minBridgeThickness;
+        let endY =  startPoint[1] < startLine[1][1] ? startPoint[1] + minBridgeThickness : startPoint[1];
 
         let rectX1 = startX;
         let rectX2 = endX;
@@ -167,19 +170,19 @@ function joinPolygons(polygonsArr, minBridgeThickness, style){
         //console.log('bridgeRect ', bridgeRect);
         polygonsArr = polygonBoolean(polygonsArr, bridgeRect, 'or');
 
-      } else if(bridgeData.lineA[0][1] == bridgeData.lineA[1][1]){
+      } else {
         // line A is Horizontal - build vertical bridge segment
         //console.log('- v then h');
 
         let startY = startPoint[1];
         let endY = endPoint[1];
 
-        let startX = startPoint[0] - minBridgeThickness;
-        let endX = startPoint[0];
-        if(startPoint[0] == startLine[0][0] && startPoint[0] < startLine[1][0]){
-          startX = startPoint[0];
-          endX = startPoint[0] + minBridgeThickness;
-        }
+        // let startX = startPoint[0] < endPoint[0] ? startPoint[0] - minBridgeThickness : startPoint[0];
+        // let endX = startPoint[0] < endPoint[0] ? startPoint[0]: startPoint[0] - minBridgeThickness;
+
+        let startX = startPoint[0] < startLine[1][0] ? startPoint[0] : startPoint[0] - minBridgeThickness;
+        let endX = startPoint[0] < startLine[1][0] ? startPoint[0] + minBridgeThickness : startPoint[0] ;
+
         let rectX1 = startX;
         let rectX2 = endX;
         let rectY1 = startY;
@@ -190,10 +193,14 @@ function joinPolygons(polygonsArr, minBridgeThickness, style){
         polygonsArr = polygonBoolean(polygonsArr, bridgeRect, 'or');
 
         // build horizontal line segment
-        startY = rectY2;
-        endY = rectY2 + minBridgeThickness;
+
+        //console.log('startLine: ', startLine);
+        //console.log('endLine: ', endLine);
+        startY = endPoint[1] < endLine[1][1] ? endPoint[1] : endPoint[1] - minBridgeThickness;
+        endY =  endPoint[1] < endLine[1][1] ? endPoint[1] + minBridgeThickness : endPoint[1];
+
         startX = rectX1;
-        endX = endPoint[0]+1;
+        endX = endPoint[0] + minBridgeThickness;
         if(startPoint[0] == startLine[0][0] && startPoint[0] < startLine[1][0]){
           startX = startPoint[0];
           endX = startPoint[0] + minBridgeThickness;
@@ -305,6 +312,12 @@ function findNearestPoints(polygonA, polygonB) {
     //console.log("y align");
 //  }
 
+  let prevPointIndex = closestPointIndex-1;
+  let nextPointIndex = closestPointIndex+1;
+
+  if (prevPointIndex < 0) prevPointIndex = polygonA.length - 1;
+  if (nextPointIndex > polygonA.length-1) nextPointIndex = 0;
+
   if(closestLine[0][0] == closestLine[1][0]){
     // Manage Vertical Lines
     lineDirection = 'v'
@@ -319,25 +332,33 @@ function findNearestPoints(polygonA, polygonB) {
     }
     if(closestPoint[1] >= closestLine[0][1] && closestPoint[1] <= closestLine[1][1]){
       overlap = true;
+      if (polygonA[prevPointIndex][0] == closestPoint[0]){
+        // prev point on PolygonA is vertically offset
+        lineA = [polygonA[prevPointIndex], polygonA[closestPointIndex]];
+      } else if (polygonA[nextPointIndex][0] == closestPoint[0]) {
+        // next point is vertically offset
+        lineA = [polygonA[nextPointIndex], polygonA[closestPointIndex]];
+      }
+      if(lineA[0][1] > lineA[1][1]){
+        lineA = [lineA[1], lineA[0]]
+      }
+    } else {
+      // nearest line is orthoganol (non overlaping) so select a perpendicular lineA
+      if (polygonA[prevPointIndex][1] == closestPoint[1]){
+        // prev point on PolygonA is horizontally offset
+        lineA = [polygonA[nextPointIndex], polygonA[closestPointIndex]];
+      } else if (polygonA[nextPointIndex][1] == closestPoint[1]) {
+        // next point is horizontally offset
+        lineA = [polygonA[prevPointIndex], polygonA[closestPointIndex]];
+      }
+      if(lineA[0][1] > lineA[1][1]){
+        lineA = [lineA[1], lineA[0]];
+      }
     }
 
-    let prevPointIndex = closestPointIndex-1;
-    let nextPointIndex = closestPointIndex+1;
+  } else if(closestLine[0][1] == closestLine[1][1]){
+    // closestLine is Horizontal
 
-    if (prevPointIndex < 0) prevPointIndex = polygonA.length - 1;
-    if (nextPointIndex > polygonA.length-1) nextPointIndex = 0;
-    if (polygonA[prevPointIndex][0] == closestPoint[0]){
-      // prev point on PolygonA is vertically offset
-      lineA = [polygonA[prevPointIndex], polygonA[closestPointIndex]];
-    } else if (polygonA[nextPointIndex][0] == closestPoint[0]) {
-      // next point is vertically offset
-      lineA = [polygonA[nextPointIndex], polygonA[closestPointIndex]];
-    }
-    if(lineA[0][1] > lineA[1][1]){
-      lineA = [lineA[1], lineA[0]]
-    }
-  } else {
-    // Manage Horizontal Lines
     lineDirection = 'h';
     // reorder points in line
     if(closestLine[0][0] > closestLine[1][0]){
@@ -352,24 +373,30 @@ function findNearestPoints(polygonA, polygonB) {
     // find if lines overlap in X pixels
     if(closestPoint[0] >= closestLine[0][0] && closestPoint[0] <= closestLine[1][0]){
       overlap = true;
+      // find the parallel line on polygonA
+      if (polygonA[prevPointIndex][1] == closestPoint[1]){
+        // prev point on PolygonA is horizontally offset
+        lineA = [polygonA[prevPointIndex], polygonA[closestPointIndex]];
+      } else if (polygonA[nextPointIndex][1] == closestPoint[1]) {
+        // next point is horizontally offset
+        lineA = [polygonA[nextPointIndex], polygonA[closestPointIndex]];
+      }
+      if(lineA[0][0] > lineA[1][0]){
+        lineA = [lineA[1], lineA[0]];
+      }
+    } else {
+      // nearest line is orthoganol (non overlaping) so select a perpendicular lineA
+      if (polygonA[prevPointIndex][1] == closestPoint[1]){
+        // prev point on PolygonA is horizontally offset
+        lineA = [polygonA[nextPointIndex], polygonA[closestPointIndex]];
+      } else if (polygonA[nextPointIndex][1] == closestPoint[1]) {
+        // next point is horizontally offset
+        lineA = [polygonA[prevPointIndex], polygonA[closestPointIndex]];
+      }
+      if(lineA[0][1] > lineA[1][1]){
+        lineA = [lineA[1], lineA[0]];
+      }
     }
-    // find the parallel line on polygonA
-    let prevPointIndex = closestPointIndex-1;
-    let nextPointIndex = closestPointIndex+1;
-
-    if (prevPointIndex < 0) prevPointIndex = polygonA.length - 1;
-    if (nextPointIndex > polygonA.length-1) nextPointIndex = 0;
-    if (polygonA[prevPointIndex][1] == closestPoint[1]){
-      // prev point on PolygonA is horizontally offset
-      lineA = [polygonA[prevPointIndex], polygonA[closestPointIndex]];
-    } else if (polygonA[nextPointIndex][1] == closestPoint[1]) {
-      // next point is horizontally offset
-      lineA = [polygonA[nextPointIndex], polygonA[closestPointIndex]];
-    }
-    if(lineA[0][0] > lineA[1][0]){
-      lineA = [lineA[1], lineA[0]]
-    }
-
   }
 
   return ({ delta: closestDelta,
@@ -377,7 +404,6 @@ function findNearestPoints(polygonA, polygonB) {
             pointB: closestPointB,
             lineA: lineA,
             lineB: closestLine,
-            lineDirection: lineDirection,
             overlap: overlap});
 }
 
