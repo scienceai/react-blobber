@@ -15,14 +15,14 @@ class Main extends React.Component {
       dragging: -1,
       //rects: [{x1:30, y1:80, x2:180, y2:120},{x1:60, y1:60, x2:155, y2:100}, {x1:115, y1:15, x2:275, y2:50}]
       rectGroups: [
-        [{x:160, y:240, width:150, height: 24},
+        /*[{x:160, y:240, width:150, height: 24},
         {x:30, y:250, width:150, height: 24},
         {x:100, y:285, width:150, height: 24},
         {x:200, y:310, width:150, height: 24}],
 
         [{x:180, y:270, width:150, height: 24},
         {x:250, y:260, width:150, height: 24},
-        {x:160, y:240, width:150, height: 24}],
+        {x:160, y:240, width:150, height: 24}],*/
 
         [{x:50, y:220, width:150, height: 24},
         {x:200, y:190, width:150, height: 24},
