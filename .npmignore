@@ -3,6 +3,7 @@ test/
 .gitignore
 .eslintrc
 .babelrc
+.travis.yml
 webpack.dev.config.js
 dev-client.js
 dev-server.js

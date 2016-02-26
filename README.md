@@ -5,9 +5,17 @@
 
 Create orthogonal blobs from grouped arrays of rectangles
 
+Example of convex-hull algorithm:
+
 <p align="center">
-  <img src="example1.png" height="250px"/>
-  <img src="example2.png" height="250px"/>
+  <img src="example1.png" width="500px"/>
+</p>
+
+Examples of polygon-union algorithm:
+
+<p align="center">
+  <img src="example2.png" width="400px"/>
+  <img src="example3.png" width="400px"/>
 </p>
 
 ### Usage
@@ -26,23 +34,23 @@ const groupLabels = [
   ['heart', 'lungs', 'brain'],
 ];
 
-const groupColors = ['#D24D57', '#F5D76E', '#C5EFF7'];
+const groupColors = ['#D24D57', '#F5D76E', '#19B5FE'];
 
 const groupRectangles = [
   [
-    { x: 30, y: 250, width: 150, height: 24 },
-    { x: 100, y: 285, width: 150, height: 24 },
-    { x: 200, y: 310, width: 150, height: 24 },
+    { x: 142, y: 154, width: 150, height: 24 },
+    { x: 254, y: 102, width: 150, height: 24 },
+    { x: 306, y: 294, width: 150, height: 24 },
   ],
   [
-    { x: 180, y: 270, width: 150, height: 24 },
-    { x: 250, y: 260, width: 150, height: 24 },
-    { x: 160, y: 240, width: 150, height: 24 },
+    { x: 219, y: 245, width: 150, height: 24 },
+    { x: 102, y: 289, width: 150, height: 24 },
+    { x: 102, y: 209, width: 150, height: 24 },
   ],
   [
-    { x: 50, y: 220, width: 150, height: 24 },
-    { x: 200, y: 190, width: 150, height: 24 },
-    { x: 250, y: 170, width: 150, height: 24 },
+    { x: 310, y: 190, width: 150, height: 24 },
+    { x: 393, y: 246, width: 150, height: 24 },
+    { x: 392, y: 130, width: 150, height: 24 },
   ],
 ];
 
@@ -54,11 +62,11 @@ class Example extends React.Component {
       <Blobber
         key={i}
         rects={rectGroup}
-        pathOffset={5}
-        cornerRadius={10}
+        pathOffset={15}
+        cornerRadius={8}
         containerStyle={{ width: '100%', height: '100%' }}
         svgStyle={{ fill: groupColors[i], stroke: groupColors[i], opacity: 0.5 }}
-        algorithm='convex-hull'
+        algorithm='polygon-union'
       />
     ));
 
@@ -83,7 +91,7 @@ class Example extends React.Component {
 
 + `svgStyle`: style object for svg paths
 
-+ `algorithm`: options are `convex-hull` or `polygon-union`. There are minor differences in appearance between the two algorithms. `convex-hull` may not produce optimal results for very complex layouts or groupings, due to convexity requirements. However, currently only `convex-hull` supports automatic extended connections between rectangles spaced far apart. `polygon-union` should soon be able to support this as well.
++ `algorithm`: options are `convex-hull` or `polygon-union`. There are minor differences in appearance between the two algorithms. `convex-hull` may not produce optimal results for very complex layouts or groupings, due to convexity requirements. The way `polygon-union` creates extensions between elements may make it more amenable to complex groupings.
 
 ### Development
 

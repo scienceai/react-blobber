@@ -9,6 +9,7 @@ body {
   padding: 0px 12px 0px 12px;
   position: absolute;
   box-sizing: border-box;
+  text-align: center;
 }
 
 .cell:hover {
@@ -22,4 +23,9 @@ body {
   top: 0px;
   left: 0px;
   border: 1px solid lightgray;
+}
+
+select {
+  font-size: 2em;
+  margin-top: 10px;
 }
